@@ -1,0 +1,108 @@
+
+- reminders
+
+  # This is a special kind of note presented by default on reload of the page
+
+
+ # Sandbox executed function
+
+ Dynamic: Time remaining until Christmas ... {TimeUntil 25 December}
+ Dynamic: {TimeSince Day25 May Yr2018 Hr13} have elapsed since the ChiTek-i company was founded
+
+ ###########
+
+ :: Monday ::
+
+ Monday's child is fair of face...
+
+ Order lunch delivery on Mondays
+
+ :: Monday, Hr10, Hr11 ::
+
+ Dynamic: Regular coordination meeting at 11:30 - TIME REMAINING .. {TimeUntil Hr11 Min30} !!
+
+ ###########
+
+ :: Tuesday ::
+
+ Tuesday's child is full of grace...
+
+ Check the bank
+
+ Check web stats
+
+ Regular call with %"Sven F"
+
+ ###########
+
+ :: Wednesday ::
+
+ Wednesday's child is full of woe...
+
+
+ ###########
+
+ :: Thursday ::
+
+ Thursday's child has far to go...
+
+ Regular meetings, prepare
+
+ ###########
+
+ :: Friday ::
+
+ Friday's child is loving and giving...
+
+ ###########
+ # WEEKEND
+ ###########
+
+ :: Saturday ::
+
+ Saturday's child works hard for a living...
+
+
+ :: Sunday ::
+
+ The child that is born on Sabbath day, is bonny and blithe, good and gay
+
+ ##################
+ # Special dates
+ ##################
+
+ :: Day3.September ::
+
+ Meeting downtown, by the fountain
+
+ :: September.Day26 ::
+
+ Mum's birthday
+
+ ##################
+ # Monthly
+ ##################
+
+ :: August | September ::
+
+   to do: Write conference talk
+
+   Mum's birthday coming up
+
+
+ ###############
+ # Seasons (northern hemisphere)
+ ###############
+
+  :: N_Spring ::
+
+    Spring cleaning: air and wash bedding, clean windows
+
+  :: N_Summer ::
+
+
+  :: N_Autumn ::
+
+  
+
+  :: N_Winter ::

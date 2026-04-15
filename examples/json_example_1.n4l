@@ -1,0 +1,162 @@
+#
+# First example of a naive schema transcription, which transcribes every type slavishly
+# like a machine parser. It results is a lot of new definitions.
+# A human is smarter than this ... so we can simplify
+#
+# JSON is hierarchical. You might be tempted to atomize it as a schema,
+# but that's not what a graph is ... here we recognize that the form of the json itself
+# is a part of the knowledge we are trying to capture.
+#
+
+-json example 1
+
+##
+
+@user1 'Instance of a users array {
+        "id": 1,
+        "username": "alice",
+        "email": "alice@example.com",
+        "active": true,
+        "roles": ["admin", "user"]
+      }'
+
+  " (id) 1
+  " (username) alice
+  " (email) "alice@example.com"
+  " (role) admin
+  " (role) user
+  " (status) active
+
+##
+
+@user2 'Instance of a users array {
+        "id": 2,
+        "username": "bob",
+        "email": "bob@example.com",
+        "active": false,
+        "roles": ["user"]
+      }'
+
+  " (id) 2
+  " (username) bob
+  " (email) bob@example.com
+  " (role) user
+  " (status) inactive
+
+
+## First separate out the branches and leaves and give them labels
+
+@users 'Partial json element -- "users" : [
+      {
+        "id": 1,
+        "username": "alice",
+        "email": "alice@example.com",
+        "active": true,
+        "roles": ["admin", "user"]
+      },
+      {
+        "id": 2,
+        "username": "bob",
+        "email": "bob@example.com",
+        "active": false,
+        "roles": ["user"]
+      }
+    ]' 
+
+   " (user) $user1.1
+   " (user) $user2.1
+
+##
+
+@metadata 'Partial json element -- " metadata": {
+      "total": 2,
+      "page": 1,
+      "limit": 10
+    }'
+
+   " (total) 2
+   " (pagenr) 1
+   " (limit) 10
+
+ ####################
+
+@data '{ "users": [
+      {
+        "id": 1,
+        "username": "alice",
+        "email": "alice@example.com",
+        "active": true,
+        "roles": ["admin", "user"]
+      },
+      {
+        "id": 2,
+        "username": "bob",
+        "email": "bob@example.com",
+        "active": false,
+        "roles": ["user"]
+      }
+    ],
+ 
+   "metadata": {
+      "total": 2,
+      "page": 1,
+      "limit": 10
+    }
+  }'
+
+  " (coll-users) $users.1
+  " (metadata) $metadata.1
+
+ ####################
+
+  ## Starts here ... just quote the whole JSON object at the top node
+  ## no reason to hide its meaningful wholeness, but
+  ## wrap the whole in single quotes since it contains double quote
+
+   # The full unique identifier of the object IS the object itself
+   # no need to invent a new layer of obfuscation...
+
+   'My json object representation is an EVENT {
+   "name": "Example API Response",
+   "version": "1.0.0",
+   "status": "success",
+
+   "data": {
+
+      "users": [
+      {
+        "id": 1,
+        "username": "alice",
+        "email": "alice@example.com",
+        "active": true,
+        "roles": ["admin", "user"]
+      },
+      {
+        "id": 2,
+        "username": "bob",
+        "email": "bob@example.com",
+        "active": false,
+        "roles": ["user"]
+      }
+    ],
+ 
+   "metadata": {
+      "total": 2,
+      "page": 1,
+      "limit": 10
+    }
+  },
+
+  "timestamp": "2025-10-17T14:30:00Z"
+}'
+
+   " (name)      Example API Response
+   " (version)   1.0.0 
+   " (status)    success
+   " (timestamp) "2025-10-17T14:30:00Z"
+   " (data)       $data.1
+
+
+
+
+

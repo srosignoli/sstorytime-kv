@@ -1,0 +1,239 @@
+
+- knowledge and background
+
+ These notes are all about how to use N4L and knowledge graphs in general (case of) How to?
+
+    " (key issue) A key issue is how we use context to activate knowledge from memory
+
+ #
+
+ :: things, topics, issues ::
+
+ facts
+ relationships
+ contexts
+ lessons
+ evidence
+ sense-making (same as) sense making (=) sensemaking
+ mapping
+ path solving
+
+
+ orbits (def) the collection of >nodes linked to a given node to >radius R
+
+ paths  (def) a collection of sequences of >nodes satisfying given criteria between start and end nodes
+
+ There are two main types of data for a graph database
+      "    (contains)  a relationship >map of explanations between >things and >concepts with examples
+      "    (contains)  >regularised >data input about >agents, persons, etc as sensory attributes and documented events
+      "    (then) The difference between these is whether the >data are first hand and >regular in >schema or attribute sets and are searchable by random access or whether they are only ad hoc explanatory >stories like metadata without all the raw examples.
+
+
+  graph data can be used in security to map out processes and networks (e.g.) find hidden pathways through a system
+
+
+ #
+
+ :: getting started ::
+
+ There are many barriers to knowledge and reasoning (consists of) overcoming the reticence or sense of difficulty
+
+ +:: _sequence_ ::
+
+   getting any notes down on the page, with approximate wordings of relationships (note) finding thematic backbones will give you a clue about how to make your notes tell a particular story whether linear or not
+   keep text in order if it belongs in order
+   separate distinct issues using contexts like subsections
+   try to rewrite the approximate wordings in terms of arrows in N4L
+   use annotations to cross reference key words
+   use the N4L compiler to debug the notes
+   upload the notes to the database and browse them further
+   add new notes and edit as you see ways to improve (note) the more you work on notes, the more easily understood they will be
+   remember that knowledge is not necessarily about facts, but about knowing something like a friend, i.e. how to react to it and what to do with it, when to avoid it etc
+
+ -:: _sequence_ ::
+
+
+ :: hints and tips  ::
+
+   if you write in your own words, as you think it, you are more likely to recognise your thoughts later
+
+   >rhyme, >rhythm, and >emotion increase the likelihood of remembering knowledge because you activate more of the major agents involved in cogitation 
+
+   avoid using single words as notes as these may occur with different meanings elsewhere. Always qualify words with some explanation, and then you can use >"special annotations" like "writing >word" to link up to the generic word
+
+   if the same words occur in several different cases, use different phrases to write about them then link both to the common phrase so that common phrase acts like an index term instead of a semantic collision (note) remember that notes are events that you are trying to describe not >"immutable truths"
+
+ a lot of notes are >reminders without much >context. Try to add >context that explains >when and >why you would want to being reminded of something.
+
+  n4l notes (e.g.) about >meetings
+  n4l notes (e.g.) about >complaints
+  n4l notes (e.g.) what's on your minds, with >context to be meaningful again in future
+
+  reminders (e.g.) a set of ad hoc observations
+      "     (e.g.) an idea or concept you think of ad hoc
+
+
+  >link >arrow types used in notes (e.g.) >arrow "remember to"
+              "                    (e.g.) >arrow "then do next"
+              "                    (e.g.) >arrow "then verify"
+              "                    (e.g.) >arrow "requires daily/monthly.."
+              "                    (e.g.) >arrow "rehearse daily/monthly.."
+              "                    (e.g.) >arrow "has emergency procedure"
+                                   
+ 
+  the most frequent >events are often the least >important
+
+  the most important >context is often how you were feeling (e.g.) people don't remember what you say, but how you made them feel
+
+
+ :: academic view, structure, key concepts ::
+
+
+ Semantic spacetime (consists of) >"three kinds of node" and >"four kinds of link"
+
+
+ three kinds of node (mkpt) quasi ontology for >"semantic spacetime"
+
+       "             (contains) >nodes that are >"events" 
+       "             (contains) >nodes that are >"concepts" or descriptive >"attributes"
+       "             (contain ) >nodes that are "material agents"
+ 
+  material agents   (e.g.) >people and >things (i.e.) things that manifestly exist, not just >concepts or >ideas
+
+  material agent axiom (def) there exists a class of >nodes that are >"material nodes" that manifest sources of >"causal change" and there exists a class of >"immaterial nodes" as >concepts that cannot exists without being bound to a material agent.
+
+  four kinds of link (mkpt) quasi ontology for >"semantic spacetime"
+
+        "       (contains) >arrow >class >"leads to"
+        "       (contains) >arrow >class >"contains"
+        "       (contains) >arrow >class >"expresses attribute" or >property
+        "       (contains) >arrow >class >"similar to" or >"near" 
+
+
+  the >"inverse path tracing problem" (connected) the >"division by zero" inverse issue (note) if we have an absorbing state that's N:1 it is not uniquely invertible, but can be defined by algebra
+
+
+  +:: rules ::
+
+  an immaterial agent or concept (!same) a material agent, person or thing
+
+               "                 (has role) something like an adjective or adverb word or phrase
+               "                 (!contain) a material agent, thing or person
+               "                 (can express)           "
+
+
+ 
+  a material agent, thing or person (!same) $PREV.1
+        "                           (e.g.) a state of being, a state of not having, a colour ... 
+        "  
+        "                           (!contain) an immaterial agent or concept
+        "                           (can express)         "
+
+
+
+
+
+
+
+  :: goals, promises ::
+
+@goal >"n4l notes" as a link between >logical >thinking and >brainstorming
+
+ N4L (has role) note-taking language tool 
+   " (used for) note-taking (=) making notes
+   " (used for) $goal.1
+
+ $goal.1 (aspect) logical thinking
+    "    (aspect) brainstorming
+
+ logical thinking (kind of) reasoning
+ brainstorming    (kind of) reasoning
+
+ to do lists (includes) learning goals
+       "     (includes) revision and review
+       "     (includes) consistency checking
+
+
+ #
+
+ :: facts , statements ::
+
+ a fact is a trusted statement (remark) a fact may or may not have supporting evidence
+
+ correctness
+ right answers
+ wrong answers
+
+ :: context , general::
+
+ Context is the description of a scene or circumstances in which facts have relevance.
+
+ Context (aspect of) knowledge
+
+ Context makes sense of facts, and tells us when they apply.
+
+ Context (derive-fr) sensory experience
+  "      (derive-fr) group behaviour
+
+ There are two kinds of context
+
+ context (generalizes) strategic context (=) strategic labelling / tagging
+     "   (generalizes) scene description 
+     "   (generalizes) problem description
+     "   (generalizes) questions we have
+
+ colon bracketing :: ... :: (used for) note taking
+        "                   (used for) arrow definitions
+
+    "   (NB) colon bracketing in arrows is not currently functional
+
+ colon bracketing :: ... :: (determines)  strategic context 
+
+ #
+
+ :: Question types ::
+
+ What is it about?
+ Which kind is it? (=) What kind of?
+ What causes? (=) What determines? (=) What generates?
+ Why does?
+ How to?
+
+ :: context , questions , problem description ::
+
+ How do we use context? (case of) How to?
+
+ Strategic context (has role) What?
+
+ # 
+
+ ::: Searching, semantic strategies ::
+
+ Look for key words in strategic context tags
+ Look for key words in section/chapter name
+
+ Get all causal consequences
+ Get all generalizations 
+ Get all specializations
+
+ Get all similar  (how) generalize up/CONTAINED BY then come back down/CONTAINS
+     "            (how) look for similar/NEAR nodes
+
+ :: API calls ::
+
+ GetDBNodePtrMatchingName (leads to) simple string match of proper name
+
+ GetArrowByName           (leads to) nodes related by query type
+
+ GetFwdConeAsNodes or Links (leads to)   neighbour nodes by STtype
+           "                (implements) GetSimilar as NEAR
+           "                (implements) GetSimilar as CONTAINED BY/CONTAINS
+           "                (implements) GetGeneralizations as CONTAINED BY
+           "                (implements) GetSpecialCases as CONTAINS
+           "                (implements) GetConsequences as LEADS TO
+           "                (implements) GetNextSteps as LEADS TO
+           "                (implements) GetHistory as inverse LEADS TO
+
+
+ GetFwdPathsAsLinks (implements) Path integral stories or histories
+

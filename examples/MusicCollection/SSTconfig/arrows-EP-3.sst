@@ -1,0 +1,51 @@
+
+
+- properties
+
+  // THE FIRST PART IS TYPICALLY MADE BY THINGS OR CONCEPTS
+
+ :: basic annotation ::
+
+ + note/remark             (note)    - is a note or remark about         (isnotefor)
+ + added remark            (remark)  - is a remark about                 (remabout)
+ + please note!            (NB)      - is an important remark concerning (important regarding)
+ + refers to               (ref)     - is referred to in                 (ref-in)
+
+ :: music collection ::
+
+ + total number of tracks (tracks)     - is the track count for (tracks-on)
+ + release date           (mreleased)  - is the release date for (release-of)
+ + was remastered on      (remastered) - a remaster was issued for (remast-of)
+ + was performed          (performance)- was the event of performance (date-perf)
+
+ + released an album (album)        - is an album release by (album by) 
+ + released a single (single)       - is a single release by (single by)
+
+ + music written by (music by)      - wrote the music for (wrote music)
+ + words/text written by (words by) - wrote the words/text for (words for)
+
+ + published the release (mpublished) - was published by (mpublisher)
+
+ + performance by ensemble type  (ensemble)     - has performed (e-perforamce)
+ + has playing time              (playtime)     - is the playing time of (playtime-of)
+ + has lyrics                    (lyrics)       - are the lyrics for (lyrics-for)
+ + has instrumental description  (instrumental) - describes an instrumental (descr-instr)
+ + has narrator                  (narrator)     - is the narrator for (narrator-for)
+
+ + has solo performance by (soloist)         - is the soloist on  (soloist-on)
+ + features solo           (solo instrument) - solo instrument in (solo-on)
+
+
+ + has mood roughly...      (mood)        - is the mood describing (mood-of)
+ + has hi-fi quality/rating (hif)         - hifi quality/rating for
+ + has sampling rate        (sample rate) - is the sampling rate for (samp-for)
+
+ + was produced by  (producer)      - produced the recording (produced)
+ + was engineered by (engineer)     - was the engineer for (engineer-for)
+ + was composed by  (composer)      - composed the work (composed)
+ + was conducted by (mconductor)    - conducted the performance (mconducted)
+ + was performed by (performed by) - performed (performed)
+ + features orchestra (orchestra) - orchestra features in (orch-for)
+
+ + indecipherable role (???)  - undecipherable role (xxx)
+ 

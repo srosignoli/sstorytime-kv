@@ -1,0 +1,307 @@
+
+- notes about SSTorytime in N4L
+
+  :: setup, get started ::
+
+  SSTorytime  (depends on) postgres
+       "      (depends on) "postgres_contrib package for unaccent() function"
+       "      (depends on) go programming language
+       "      (note) made with Linux but doesn't depend on anything specific to Linux
+       "      (has feature) supports all human languages in Unicode (note) languages that don't use spaces between words may have some issues
+
+ ###############################################
+
+   :: motivation, _sequence_ ::
+
+  The goal is to implement useful search patterns for a graph structure in an efficient way.
+
+  Because database connection is slow, we do as much as possible to reduce that amount of data sent over the wire by performing all processing internally. (note) This has the tradeoff of using a slow script language in the database kernel.
+
+  Loading data into a database, with validation, is slow. Retrieving is much faster.
+
+  A graph is basically a structure with an index at every node. There are two modes of use: random access lookup for starting a search--which SQL is already good at, and exploring, path tracing, following leads from that starting point like hypertext.
+
+  Most graph databases don't give any guidance in modelling or searching. They are based on SQL random access search, but this is not how we need to use graphs. 
+
+  Graphs are for following paths with different meanings - or "semantics".
+
+   -::_sequence_::
+
+ ###############################################
+
+  :: _sequence_, context ::
+
+  The hard problem of knowledge is context.
+
+  ***SSTorytime takes a ***"Promise Theory" approach.
+
+  Context has two roles in knowledge: promise theoretically it has a '+' donor role when categorizing information through notes. It also has a "-" acceptance or filtering role when searching. Both of these are represented by the ":: ... ::" lines in N4L. 
+
+  When we are laying out new information, we use the context tags/tokens like a section heading. This is the "+" promise.
+
+  When we are searching, we use context tags as a filter to reduce the scope of a search. This is the "-" promise.
+
+  The overlap between "+" and "-" promises is the outcome. In order to make this effective, it requires some planning in the way we name sections. This is something that develops over time, so we have to understand that knowledge is individual, dynamic and interactive--a process, not a stale archive written once and for all.
+
+  While engaged in a search process, the knowledge agent remembers the intended parts of searches as current scenario context. You will see some of this history pop up at the top of the search result to give you further hints based on past behaviour.
+
+Sometimes you might see chapters that you didn't select showing up in searches. This is probably a result of certain words and phrases belonging to more than one chapter, and thus bridging chapters that you didn't intend. This possibility for bridging is intentional, as it allows ***"lateral thinking", which is an important source of discovery.
+
+ What role should times play? Precise times are irrelevant because they never repeat. Coarse grains of time like "Monday morning" do repeat and may be relevant in finding intended information. But how do we record the time? Is it the time at which information
+was written, uploaded, or when something actually happened? The technology can't guess this for you, because it needs to be intentional. The ambient time isn't necessarily relevant.
+
+ SSTorytime shows you the ambient time in a coarse grained form after every search, so that you can copy and paste this into context tags if you want to be able to use it later. If you make a search without any search terms, you will see any items that are labelled in a matching time. So, if you have specific ***"to-do"/***todo / to do lists for specific times, these will pop up by themselves.
+
+ -:: _sequence_ ::
+
+ ###############################################
+
+  :: search strategy in N4L ::
+
+  You can start broad with general search terms, without specifying specific chapters. If you have a lot of data, this becomes less and less likely to succeed. As data grow, we need to narrow the search and we can't use popularity voting like PageRank to guess which are the important results.
+
+ You cam limit the number of entries returned using the LIMIT keyword. If you make this number large, the query will take a long time to return, especially over the web, as the marshalling cost is high.
+
+ You can start narrow with a very specific term by quoting longer strings including spaces, but this assumes you know what is already there. Then you can gradually reduce the number of constraints by ADDING contexts and search terms.
+
+ "NCCS criteria" (means) Node, Chapter, Context, Sequence: searches will select nodes that match all these criteria in one go
+
+ ###############################################
+
+   :: theory, reasoning, algorithms :: 
+
+  Ranking of n-grams is based on two parts: the ***intentionality or amount of ***work needed to write them, and the frequency of use
+
+  work (used for) measuring intent
+
+  noise level (def) n-grams that occur less than 
+
+  "THEME_LIM"  (def) a constant scale approximately the size of a long paragraph set to 100 sentences
+
+  a %paragraph is defined as either a text measure separated by two newlines or if we exceed the the maximum threshold %THEME_LIM
+
+  intent (means) a measure that distinguishes ad hoc or random change from %causal %change
+    "    (variant) intentionality
+    "    (def)  a measure of the degree to which something might be intended
+
+  variant (means) a different grammatical form of the same word of phrase
+  causal (variant) causality
+
+  %"Short phrases" used once are usually unique names i.e. a %"proper name"
+
+  proper name (means) an ad hoc identifier without descriptive meaning
+
+  %"Longer phrases" used a limited number of times are common concepts (note) %"Longer phrases" are easier to write than short precise phrases, so people need help to break them down and summarize their intent
+
+  The most frequently used n-grams are the least meaningful, used for padding and rhythm
+
+  n-gram (means) fragment of n words as an ordered sequence (note) any sentence can be broken up into n-gram fragments, like a DNA analysis.
+     " (variant) n-grams 
+
+  documents can be scanned to identify %context and %factoid parts
+
+  context (means) a collection of signals that identify a scenario, like a scene description language
+  factoid (means) a nugget of meaningful information contributing to knowledge
+
+  a text source of document (consists) paragraphs (consists) sentences (consists) punctuated fragments (consists) %"n-grams"
+
+  punctuated fragments (used for) ranking the %intentionality or importance of text
+  sentences   (used for) %factoids and partial %knowledge (ex) factoid
+
+  Knowledge scanned from text is most likely to be in the form of paragraphs and sentences. It needs to be broken down into its constituent parts, like a DNA analysis, to understand its relationship to other notes.
+
+  :: uses, use-cases ::
+
+  Making %notes (note) Notes are more concise than documents, prose, or spoken language. 
+        "      (note) Notes are condensed intent without flowery elaboration.
+        "      (note) AI and LLMs produce fluid %prose language, which is not in note form.
+
+      "  (might be used for)  Incident reporting with causal commentary
+      "  (might be used for)  Risk procedure documentation
+      "  (might be used for)  SRE problem diagnosis methods
+      "  (might be used for)  HOW-TO sequences and recipes
+      "  (might be used for)  Language learning
+      "  (might be used for)  Fact based cramming  
+      "  (might be used for)  Forensic fact assimilation and reasoning.
+      "  (might be used for)  Reasoning with mathematical support (formula) "\( x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \)"
+
+  :: technical details ::
+
+ postgres (depends on) postgres configuration
+     "    (depends on) create the SST database (e.g.) "$ sudo su -
+$ su - postgres
+$ psql
+# CREATE user sstoryline password 'sst_1234' superuser;
+# CREATE DATABASE sstoryline;
+# CREATE DATABASE newdb;
+# GRANT ALL PRIVILEGES ON DATABASE sstoryline TO sstoryline;
+# GRANT ALL PRIVILEGES ON DATABASE newdb TO sstoryline;
+# CREATE EXTENSION UNACCENT;"
+
+     "  (depends on) open for local connections (e.g.) "# File pg_hba.conf, locate for your distribution (you might have to search for it):
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+# "local" is for Unix domain socket connections only
+local   all             all                                     peer
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            password
+# IPv6 local connections:
+host    all             all             ::1/128                 password"
+
+ # to finish ...
+
+
+
+
+ stored procedures/functions in postgres
+
+    "   (note)  uses a language that looks a lot like SQL but is markedly different - beware! (name) PLpgSQL
+    "   (e.g.)  "FUNCTION SumFwdPaths(start link, path text, orientation text, depth integer, maxdepth integer, exclude nodeptr[])
+ DECLARE
+     fwdlinks Link[];
+     empty Link[] = ARRAY[]::Link[];
+     lnk Link;
+     fwd Link;
+     ret_paths Text;
+     appendix Text;
+     tot_path Text;
+ BEGIN
+ IF depth = maxdepth THEN
+   ret_paths := Format('%s\n%s',ret_paths,path);
+   RETURN ret_paths;
+ END IF;
+ fwdlinks := GetFwdLinks(start.Dst,exclude,sttype);
+ FOREACH lnk IN ARRAY fwdlinks LOOP
+    IF NOT lnk.Dst = ANY(exclude) THEN
+       exclude = array_append(exclude,lnk.Dst);
+       IF lnk IS NULL THEN
+         ret_paths := Format('%s\n%s',ret_paths,path);
+          RETURN ret_paths;
+      ELSE
+          tot_path := Format('%s;%s',path,lnk::Text);
+          appendix := SumFwdPaths(lnk,tot_path,sttype,depth+1,maxdepth,exclude);
+          IF appendix IS NOT NULL THEN
+             ret_paths := Format('%s\n%s',ret_paths,appendix);
+          ELSE
+            ret_paths := Format('%s\n%s',ret_paths,tot_path);
+         END IF;
+      END IF;   
+END IF;
+END LOOP;
+RETURN ret_paths;
+END;"    (ex)  A recursive search in SQL
+
+
+  ######################################################## 
+
+  :: low level API, golang, go programming ::
+
+ +::data types::
+
+ PoSST     (use-for) establishing a connection to the SST library service
+ Node      (use-for) representing core aspects of a single graph node
+
+   "   (def)  'type Node struct {
+
+	L         int     // length of text string
+	S         string  // text string itself
+
+	Seq       bool    // true if this node begins an intended sequence, otherwise ambiguous
+	Chap      string  // section/chapter name in which this was added
+	NPtr      NodePtr // Pointer to self index
+
+	I [ST_TOP][]Link  // link incidence list, by STindex - these are the "vectors" +/-
+  	                  // NOTE: carefully how STindex offsets represent negative SSTtypes
+}'
+
+ NodePtr   (use-for) unique key referring to a node and pointing to its data
+
+    "      (def)  'type NodePtr struct {
+
+	Class int            // Text size-class, used mainly in memory
+	CPtr  ClassedNodePtr // index of within name class lane
+}'
+
+ Link      (use-for) representing a graph link, with arrow and destination node and weight
+
+   "       (def) 'type Link struct {  // A link is a type of arrow, with context
+                    // and maybe with a weightfor package math
+	Arr ArrowPtr         // type of arrow, presorted
+	Wgt float32          // numerical weight of this link
+	Ctx ContextPtr       // context for this pathway
+	Dst NodePtr          // adjacent event/item/node
+}'
+
+ ArrowPtr  (use-for) A unique key for a type of link arrow and its properties
+ PageMap   (use-for) representing the original N4L intended layout of notes
+
+     "     (def) 'type PageMap struct {  // Thereis additional intent in the layout
+
+	Chapter string
+	Alias   string
+	Context ContextPtr
+	Line    int
+	Path    []Link
+}'
+
+ :: golang API, database upload functions, self-managed NPtr  ::
+
+"CreateDBNode(ctx PoSST, n Node) Node" (use-for) establishing a node in postgres without auto %NPtr assignment
+"UploadNodeToDB(ctx PoSST, org Node)"  (use-for) uploading an existing Node in memory to postgres
+"UploadArrowToDB(ctx PoSST,arrow ArrowPtr)" (use-for) uploading an arrow definition from memory to postgres
+"UploadInverseArrowToDB(ctx PoSST,arrow ArrowPtr)" (use-for) uploading an inverse arrow definition
+"UploadPageMapEvent(ctx PoSST, line PageMap)" (use-for) uploading a PageMap structure from memory to postgres
+
+ :: database upload functions, DB-managed NPtr  ::
+
+"IdempDBAddNode(ctx PoSST,n Node) Node" (use-for) appending a node when you don't want to manage the NPtr values.
+"IdempDBAddLink(ctx PoSST,from Node,link Link,to Node)" (use-for) entry point for adding a link to a node in postgres
+
+"CreateDBNodeArrowNode(ctx PoSST, org NodePtr, dst Link, sttype int) bool" (use-for) adding a NodeArrowNode secondary/derived structure to postgres
+
+ :: golang API, searching functions ::
+
+"GetDBNodePtrMatchingName(ctx PoSST,name,chap string) []NodePtr"  (use-for) finding a list of %NPtr matching a substring by name
+"GetDBNodePtrMatchingNCCS(ctx PoSST,nm,chap string,cn []string,arrow []ArrowPtr,seq bool,limit int) []NodePtr"  (use-for) Comprehensive search by %"NCCS criteria"
+"GetDBChaptersMatchingName(ctx PoSST,src string) []string"  (use-for) obtaining a list of chapters matching by name
+"GetDBContextByName(ctx PoSST,src string) (string,ContextPtr)"  (use-for) obtaining context sets that match by string name
+"GetDBContextByPtr(ctx PoSST,ptr ContextPtr) (string,ContextPtr)"  (use-for) obtaining the context set with given index pointer
+"GetSTtypesFromArrows(arrows []ArrowPtr) []int"  (use-for) obtaining the generic semantic spacetime type for a given a list of arrow pointers
+"GetDBSingletonBySTType(ctx PoSST,sttypes []int,chap string,cn []string) ([]NodePtr,[]NodePtr)"  (use-for) find nodes that are sources or sinks for a specific STType
+"SelectStoriesByArrow(ctx PoSST,nodeptrs []NodePtr, arrowptrs []ArrowPtr, sttypes []int, limit int) []NodePtr"  (use-for) finding nodes that are sources for story sequences matching the arrow types
+
+"GetDBArrowsWithArrowName(ctx PoSST,s string) (ArrowPtr,int)"  (use-for) obtaining an arrowpointer and STType matching a precise name
+"GetDBArrowsMatchingArrowName(ctx PoSST,s string) []ArrowPtr" (use-for) obtaining a list of arrowpointers matching the approximate name
+"GetDBArrowByName(ctx PoSST,name string) ArrowPtr"  (use-for) obtaining an arrowpointer for precise arrowname - redundant
+"GetDBArrowByPtr(ctx PoSST,arrowptr ArrowPtr) ArrowDirectory" (use-for) obtains an arrow directory entry for a given arrow pointer
+"GetDBArrowBySTType(ctx PoSST,sttype int) []ArrowDirectory" (use-for) obtains the arrow directory for a given STtype
+"GetDBPageMap(ctx PoSST,chap string,cn []string,page int) []PageMap"  (use-for) obtains a page from the named chapter as a page map
+
+ :: golang API, causal cones ::
+
+"GetFwdConeAsNodes(ctx PoSST, start NodePtr, sttype,depth int,limit int) []NodePtr"  (use-for) obtains the orbit around a starting node as a set of nodes to given depth
+"GetFwdPathsAsLinks(ctx PoSST, start NodePtr, sttype,depth int, maxlimit int) ([][]Link,int)"  (use-for) obtains all possible paths from a node along STtype links
+"GetEntireNCSuperConePathsAsLinks(ctx PoSST,orientation string,start []NodePtr,depth int,chapter string,context []string,limit int) ([][]Link,int)" (use-for) obtains all possible paths from a starting node, with orientation "fwd,bwd,any" as link arrays matching the chapter and context criteria
+
+ :: search language ::
+
+"SolveNodePtrs(ctx PoSST,nodenames []string,search SearchParameters,arr []ArrowPtr,limit int) []NodePtr"  (use-for) finding a set of matching NPtrs satisfying the search parameters compiled by a search command
+
+ :: themes ::
+
+ You can select colour themes in the web browser by typing \theme and a colour style. Currently supported: light, dark, slate, spaceblue/astronomy/blue and red.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

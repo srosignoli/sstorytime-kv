@@ -1,0 +1,58 @@
+#
+# Second example of schema transcription, which transcribes every type slavishly
+# like a machine parser. It results is a lot of new definitions.
+# A human is smarter than this ... so we can simplify
+#
+# JSON is hierarchical. we allow ourselves to atomize it as a schema,
+# but that's not what a graph is ...
+#
+
+-json example 3
+
+@user1 User 1
+
+  " (id)        1
+  " (username)  alice
+  " (email)     alice@example.com
+  " (role)      admin               // are roles ordered or not? Do we need additional "follows" links
+  " (role)      user
+  " (status)    active
+
+ ####################
+
+@user2 User 2
+  " (id)       2
+  " (username) bob
+  " (email)    bob@example.com
+  " (role)     user
+  " (status)   inactive
+
+@users User array for "Example API Response"
+   " (user) $user1.1
+   " (user) $user2.1
+
+ ####################
+
+@metadata Metadata for "Example API Response"
+   " (total)  2
+   " (pagenr) 1
+   " (limit)  10
+
+ ####################
+
+@data Data for "Example API Response"
+  " (coll-users) $users.1
+  " (metadata)   $metadata.1
+
+ ####################
+
+  Example API Response
+   " (version)   1.0.0 
+   " (status)    success
+   " (timestamp) "2025-10-17T14:30:00Z"
+   " (data)      $data.1
+
+
+
+
+

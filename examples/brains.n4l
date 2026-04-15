@@ -1,0 +1,119 @@
+
+- neuroscience brains
+
+:: brain waves, oscillations ::
+
+alpha waves  (freq) 5-15 Hz
+         "    (state) very relaxed, light or passive attention
+beta waves  (freq) 12-35 Hz
+    "        (state) medium attention,anxiety dominant, active, external attention
+gamma waves  (freq) 32-100 Hz
+   "         (note) 40 Hz of special interest
+   "         (state) concentration
+   "  (occurs) premotor cortex
+   "  (occurs) parietal cortex
+   "  (occurs) temporal cortex
+   "  (occurs) frontal cortex
+
+delta waves  (freq) 0.5-4 Hz
+   "         (state) sleep
+theta waves (freq) 4-8 Hz
+    "      (consists of) type 1
+    "      (consists of) type 2
+
+:: brain structure , brain parts etc ::
+
+human brain (consists of) forebrain
+   "       (consists of)  midbrain
+    "      (consists of)  hindbrain
+
+neocortex (hasstruct) modular repeating columns in 6 layers
+     "    (role)  accumulating knowledge 
+     "    (evolved from)   outgrowth of hypothalamus
+
+hypothalamus (role) key nexus between body and brain , vital decision making circuits
+     "     (where) forebrain
+     "     (role) monitoring signals in the bloodstream and neural signals
+     "     (infl) hormones
+     "     (role) regulate bodily functions—blood pressure, heart rate, enzyme levels, digestion, gut peristalsis, sweating, shivering, sleep, arousal
+     "     (note) hypothalamus is extensively interconnected with other brain regions that collectively provide signals that motivate different types of behaviors, with varying levels of urgency. The resultant signals of need may be experienced as hunger, thirst, tiredness, cold, pain, fear, and so on; that is, basic emotions.
+
+ "     (infl) urges to eat, drink, sleep, find shelter, avoid whatever is causing pain or fear, or respond with defensive or aggressive behaviours.
+
+ " (evolved from) early telencephalon, meaning the end of the brain
+ " (leads to) ultimately expand in mammals to become the neocortex
+
+hormones (infl) autonomic nervous system 
+
+thalamus (where) forebrain
+
+retinal ganglia (where) optic nerve
+     "         (signals) tectum, thalamus
+
+columnar organization hypothesis
+
+column (pt-of) neocortex 
+column (depends on) tectum, thalamus
+
+
+// Each column is thus a functional unit designed to take in a variety of inputs, operate on them in some way, communicate with neighbouring column 
+
+
+basal ganglia (where) below cortex, forebrain
+     "         (hasstruct) nested circuit loops
+     "         (role) mediates evaluatuon and selection of actions 
+     "         (depends on) signal from midbrain about reward/punishment/surprise 
+inner chamber
+
+ :: memory, spacetime encoding ::
+
+place cells
+grid cells
+
+hippocampus  (role) learning and memory
+     "      (role) creates temporary structured episodic record 
+     "      (role) structured for causal relationships A causes B
+
+tectum (role) maps incoming sensory stimulus to a menu of actions/instincts
+   "   (role) performs various kinds of neural operations, using these integrated maps of different kinds of stimuli to derive an optimal action
+   "   (works-by) attractive signals engage a winner-takes-all competition
+   "   (note) conditional promises
+ 
+   "    (where) top of midbrain
+
+layer 1 (role) top down modulation
+   "    (note) plays a role in intentionality?
+
+layer 2, layer 3 (role) collect sensory information and integrate with neighbouring columns
+
+layer 4 (role) receive inputs from other brain areas
+
+layer 5 (role) take signals from 2,3 and context and redistribute
+   "    (signals) tectum, cortex, spine, other hemisphere 
+
+layer 6 (role) feedback mainly to thalamus
+   "    (signals) back to thalamus
+
+thalamus (role) conduit/relay station for sensory information
+   "     (role) performs significant processing/compression on input
+
+affordances (role) what we can do with a object or service
+   "   (note) conditional promises
+
+neurons that fire together wire together
+
+hippocampus (contains) physical structures/neural circuits 
+
+
+encoding meaning as "things" is efficient conceptualisation, which is a coarse graining of spacetime pattern persistence and recurrence.
+
+:: references ::
+
+Complementary roles for hippocampus and anterior cingulate in composing continuous choice   (url) "https://www.biorxiv.org/content/10.1101/2025.03.17.643774v1.full"
+
+Left–right-alternating theta sweeps in entorhinal–hippocampal maps of space (pub-by) Nature
+
+   " (discusses) theta waves
+   " (discusses) place cells spacetime
+  "  (discusses) place cells (pt-of) hippocampus
+  "  (discusses) grid cells (pt-of) entorhinal cortex

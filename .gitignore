@@ -1,0 +1,31 @@
+# Compiled binaries
+N4L
+N4L.exe
+searchN4L
+searchN4L.exe
+pathsolve
+pathsolve.exe
+
+# Go build cache and test artifacts
+*.test
+*.out
+/vendor/
+
+# BadgerDB data directories (runtime-generated)
+# examples/sst_data/ is intentionally tracked (pre-built example data)
+sst_data/
+!/examples/sst_data/
+
+# Migration tool output
+stubs.txt
+
+# Editor and IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

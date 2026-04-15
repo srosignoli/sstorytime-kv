@@ -1,0 +1,105 @@
+
+- SSTorytime help and search examples
+
+ :: help ::
+
+ Type commands to search, e.g. "monitoring signal" or brain (url) "https://github.com/markburgess/SSTorytime/blob/main/docs/search_examples.md"
+
+ Commands are signified with a backslash e.g. "\command", but on a command line, you need to escape them with two blackslashes \\command.
+
+ :: Commands ::
+
+	\on        (means) on, about, or for a subject, e.g. \notes \on brain
+	\for       (means)    "
+	\about     (means)    "
+	\in        (means)    "
+	\notes     (means) show the notes as you wrote them in N4L
+	\browse    (means)    "
+	\page      (means)    "
+	\path      (means) solve for a continguous path
+	\sequence  (means) look for notes with _sequence_ stories
+	\seq       (means)    "
+	\story     (means)    "
+	\stories   (means)    "
+	\from      (means) search for paths from some starting point, e.g. \from !start!, \from b3
+	\to        (means) search for paths going to some point, e.g.  \to b3, \to target
+	\ctx       (means) specify a context to filter results,  e.g.  any \context Monday
+	\context   (means)     "
+	\as        (means)     "
+	\chapter   (means) specify a chapter to restrict the search
+	\section   (means)     "
+	\contents  (means) show a table of contents
+	\toc       (means)     "
+	\arrow     (means) restrict by arrow type, name, or number
+	\limit     (means) specificy the maximum search results
+	\depth     (means) specify the depth of path search
+	\range     (means)    "
+	\distance  (means)    "
+	\stats     (means) Show statistics of usage, as determined by visitation and checkbox clicks
+	\remind    (means) Show reminders from reminders.n4l
+	\help      (means) Show this help
+ 
+
+ :: Word search , _sequence_ ::
+
+Search for a precise word (e.g.) Just type: !a1! or |a1|
+      "                   (e.g.) Just type: "ephemeral or persistent"
+      "                   (e.g.) 'Use the NPtr address: (4,4138)'
+
+Search for any combination of a set of words (e.g.) Just type:  word1 word2 word3 \limit 25
+     "                                       (e.g.) Just type:  recipe fish soup
+
+
+Search for any combination of a set of words in a chapter
+
+  " (e.g.)  word1 word2 word3 \chapter dictionary
+  " (e.g.)  recipe fish soup  \chapter "my recipes"
+
+Search for any combination of a set of words in named context, any chapter
+
+  " (e.g.)  word1 word2 word3 \context "weird words"
+  " (e.g.)  recipe fish soup  \chapter food
+
+General word search
+
+  " (e.g.)  word1 word2 word3 \chapter "my chapter" yourchapter \context "weird words"
+  " (e.g.)  recipe fish soup  \chapter food \context food, recipes, dishes
+
+ -:: _sequence_ ::
+
+
+ :: Table of contents ::
+
+Find a chapter 
+  " (e.g.) \chapters  \limit 50
+  " (e.g.) \chapter mychapter
+
+
+ :: Notes view::
+
+ Print original notes from a chapter
+
+  " (e.g.) \notes mychapter
+  " (e.g.) \notes \on brain
+
+ :: Stories and sequences ::
+
+Listing an entire story/sequence
+  " (e.g.) '\story (wuya)'
+  " (e.g.) \story Mary
+  " (e.g.) \sequence "create a pod"
+
+
+ :: paths, solutions ::
+
+Solving for paths from A to B
+  " (e.g.) \paths \from start \to target
+  " (e.g.) \from !a1! \to b6
+
+
+ :: arrows ::
+
+Lookup an arrow
+  " (e.g.) \arrow succeed
+  " (e.g.) \arrow 1
+  " (e.g.) \arrow 232

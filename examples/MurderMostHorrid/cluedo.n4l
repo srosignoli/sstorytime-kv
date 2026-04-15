@@ -1,0 +1,159 @@
+
+-Cluedo: Forensic map of a Murder Most Horrid
+
+ // invariants and dependencies define first, as we may need to refer to them
+
+ #######################
+
+ :: Dramatis personae ::
+
+ scarlett (id-for) Miss Scarlett, The Woman in Red, New York socialite.
+ plumb    (id-for) Professor Plumb, University of Oxford, Lincoln College.
+ dibbly   (id-for) Florist working at the Summertown flower shop
+    "     (also called) dibbly womble
+ martin   (id-for) Manic Martin, possible boyfriend, unknown
+
+ doorman  (id-for) Fabian Merryweather, former Army officer, 24 Summertown Road
+
+ car      (id-for) Black Ford Cortina 1972, vehicle number 1234
+  "       (role) the get away vehicle
+
+ #######################
+
+ :: locations :: 
+
+ library
+ Covent Garden Pub
+ 24 Summertown Road
+
+
+ #######################
+
+ :: key events ::
+
+@party  party hosted by >scarlett in London flat, evening of the 23rd March
+    "   (note) This was a month before >scarlett dated >martin
+
+@scarlettarrives  entering the library on Monday at 10am
+@doormanarrives   doorman arrived at library for work on Monday 7 am
+
+@murder Murder of Ms Scarlett with a gun Wednesday April 1st, around 11 am in the morning
+        " (weapon) gun
+        " (victim) scarlett
+
+@concert Opera Concert of 4/3/21
+
+ #######################
+
+ :: timeline, order, _sequence_ ::
+
+
+$concert   (timestamp) 4/3/21
+
+heavy traffic between >"18:00" and >"19:00"
+
+@pstart  party (start) 23rd March >"20:00", 
+            "  (location) Kensington, London
+
+jamie arrives >"20:30"
+
+@relocate Some guests moved from party to pub around 1 am, 24th
+        "         (location)  Covent Garden, London
+
+@pend    party  (end)   24rd March >"03:00", 
+
+@mondaymorning Monday morning
+       "       (event) $murder.1
+
+
+ 
+ -:: _sequence_ ::
+
+
+ #######################
+
+ :: alibis ::
+
+  dibbly womble saw $scarlettarrives.1
+  anonymous tip saw $scarlettarrives.1
+
+ #######################
+
+ :: what do we know?, facts, established , movements ::
+
+  car (prev-owned) plumb
+  car (owned-by) hotel doorman
+
+  scarlett      (attend) $party.1 (question) who else was there?
+  dibbly womble (attend) $party.1
+  martin        (attend) $party.1
+
+  deadly nightshade (causes) hallucinations / death
+
+  >scarlett erratic behaviour (leads to) accusations and anger
+
+  martin  (is-memb) Gentleman's club (has activity) >gun range shooting
+
+ #######################
+
+ :: weapons found at the scene ::
+
+ // we might be tempted to create a group of weapons, but why?
+ // the role is clear and there is no need to prejudice the meaning
+
+ bread knife 
+ meat cleaver        (stateinv) excluded
+ mushrooms
+ deadly nightshade
+ gun
+
+ #######################
+
+ :: hearsay, interviews ::
+
+ >scarlett had a crush on >plum (question) was the crush reciprocated? 
+            "                  (reported by) harriet
+            "                  (motive) had a crush 
+ >martin was jealous of >plum because both dated >scarlett
+
+ >jamie intended to be at the party by 7pm but got stuck in traffic, arriving at >"20:30"
+
+ >anne came early to the party to meet >jamie (leads to) >anne sees >sally entering the kitchen
+
+ >anne blamed >jamie for losing their house
+          "   (motive) blame >jamie
+
+ scarlett (partner) martin
+ jamie    (partner) anne
+ pumb     (partner) tiddles the cat
+
+ Professor >plumb was reading in the library (where) library
+                       "                     (while) reading Weapon Making (about) weapon
+                       "                     (when)  $mondaymorning.1
+
+ plumb  (dated) scarlett
+ martin (dated) scarlett
+
+ ######################
+
+ :: scenarios ::
+
+ # First the unifying event is a distinct top level
+ # spacetime hub unifying the contributing components
+
+ Hypothesis: miss >scarlett wanted to murder professor >plumb (using weapon) bread knife
+
+                  "                    (where) in the library
+
+                  "                    (perpby) Miss Scarlett
+
+                  "                    (victim) Professor Plumb
+
+ ##############################
+
+ :: Layout, Scene ::
+
+ The library (connects to) The garden
+ The garden  (contains) deadly nightshade
+ 
+

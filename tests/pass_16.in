@@ -1,0 +1,17 @@
+
+
+-testcase
+
+ A (and) B
+  one string (likes) " 
+
+ something
+ something else (is not) a third thing
+
+
+
+
+
+ # the next thing after a lone " should be a ( or a \n
+
+ # There should be no space at the start of a quoted string

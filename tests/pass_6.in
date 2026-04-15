@@ -1,0 +1,13 @@
+# complex context expression
+
+-sectioname
+
+::context, context2,  context2.child, context3, (context2.(a|b))|c, context4 ::  #... L4
+
+item1 
+
+-::context2,context4 ::
+
+item2
+
+

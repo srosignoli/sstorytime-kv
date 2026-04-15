@@ -1,0 +1,78 @@
+
+-building construction
+
+:: entrepreneurs ::
+
+ HammerOn AS  (org) Norway   // in the context of entrepreneurs, HammerOn is a Norwegian company we might refer to
+ ScrewIt AS
+ Windows GMBH (org) DeGuo
+ 
+ TeaBreak Ltd (supplies) English Breakfast Tea
+ Wubbadubba   (supplies) airfilters           // believe it or not!
+ ReBase AS    (handles)  concrete realkalisation
+
+:: Bjørvika project ::
+
+ ::: meeting 1 :::
+
+ Martin X met with Sonja Y, Knut Z
+       " (involves) Sonja Y
+       " (involves) Knut Z
+ Martin X (proposes) apply for insulation grant
+ meeting 1 (decides) next meeting cancelled 
+
+ ::: materials . recycling ::: 
+
+ metal screws   (decided by) Sven F
+
+
+:: landfill ::
+
+   all our hopes and dreams 
+
+
+:: people ::
+
+   // Note handles is a poor choice of words. It could mean two different things
+   Sven F (handles) sorting metals
+
+:: terms, terminology, roles ::
+
+ architecture 
+ foundation
+ roof
+ dry wall (same as) plasterboard (en) gipsplate
+ balcony
+ 
+
+// Another person ....
+
+:: Bjørvika goals ::
+
+ recycle 80% of waste
+ energy recycling
+ balanced ventilation 
+
+::: ettårsbefaring :::
+
+  Maciej Z (handles) Operagata 2, Rostockagata 6
+
+
+:: 2024-06-12 delivery ::
+
+  shipment 1 (delivaddr) operagata 2 
+     "       (contains)  type 40 air filters
+     "       (note)   2 days late
+#     "      (damaged) 2 boxes   // this is ambiguous and needs reworking
+      "      (contains) 2 damaged boxes
+
+   2 damaged boxes (cond) water damage
+
+
+
+
+
+
+
+
+

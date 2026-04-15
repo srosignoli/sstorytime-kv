@@ -1,0 +1,127 @@
+#!/bin/sh
+
+#
+# This should eventually automate the test cases once the software details become stable
+# For now, as things are changing, tests need to be run manually
+#
+
+PASS_PROG="../src/N4L -adj=all"
+FAIL_PROG="../src/N4L"
+WARN_PROG="../src/N4L"
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+END='\033[0m' # No Color
+OUT="test_output"
+
+rm -f test_outputs/*
+
+#
+#  Name tests to pass pass_1.in etc - the output matters here
+#  Name tests to fail fail_1.in etc - the error message matters here
+#
+
+echo ""
+echo "Testing standalone version"
+echo ""
+
+for f in pass_*.in; do
+   echo -n testing $f
+   rm -f test_outputs/N4L*.log
+   if $PASS_PROG $f > /dev/null; then 
+       echo -e "${GREEN} ok ${END}"
+   else 
+       echo -e "${RED} NOT ok ${END}"
+   fi
+done
+
+
+for f in fail_*.in; do
+   rm -f test_outputs/N4L*.log
+   echo -n testing $f
+
+   if $FAIL_PROG $f > /dev/null; 
+       then 
+       echo -e "${RED} NOT ok ${END}"
+   else 
+       echo -e "${GREEN} ok ${END}"
+   fi
+done
+
+for f in warn_*.in; do
+   rm -f test_outputs/N4L*.log
+   echo -n testing $f
+
+   if [[ $($WARN_PROG $f) ]];
+   then
+      echo -e "${GREEN} ok ${END}"
+   else
+      echo -e "warning ${RED} NOT ok ${END} -- ${run}"
+   fi
+done
+
+
+#########################################################
+# Now look at database behaviour
+#########################################################
+
+echo "-----------------------------------------"
+echo " library tests"
+echo "-----------------------------------------"
+
+DB_TEST_PROG="../src/demo_pocs/postgres_testdb"
+
+if $DB_TEST_PROG > /dev/null; 
+   then 
+      echo -e "1. ${GREEN} database ok ${END}"
+
+      TESTPROG=../src/API_EXAMPLE_3
+
+      if $TESTPROG > /dev/null; 
+         then 
+            echo -e "2. ${GREEN} basic database functions ok ${END}"
+       else 
+            echo -e "2. ${RED} database functions NOT ok ${END} (try running (cd examples; make) first)"
+       fi
+else 
+      echo -e "1. ${RED} DATABASE NOT CONFIGURED ${END}"
+
+fi
+
+DB_TEST_PROG="../src/API_EXAMPLE_1"
+
+if $DB_TEST_PROG > /dev/null; 
+   then 
+      echo -e "3. ${GREEN} database API ok ${END}"
+   else 
+      echo -e "3. ${RED} DATABASE NOT CONFIGURED -- add data (cd examples; make) first ${END}"
+
+fi
+
+
+DB_TEST_PROG="../src/demo_pocs/dotest_getnodes"
+
+if $DB_TEST_PROG > /dev/null; 
+   then 
+      echo -e "4. ${GREEN} link mode consistency ok ${END}"
+   else 
+      echo -e "4. ${RED} link model consistency, try rebuilding and add data (cd examples; make) first)${END}"
+fi
+
+DB_TEST_PROG="../src/demo_pocs/dotest_entirecone"
+
+if $DB_TEST_PROG > /dev/null; 
+   then 
+      echo -e "5. ${GREEN} link causal cone consistency ${END}"
+   else 
+      echo -e "5. ${RED} causal cone consistency, try rebuilding ${END}"
+fi
+
+DB_TEST_PROG="../src/demo_pocs/definecontext"
+
+if $DB_TEST_PROG > /dev/null; 
+   then 
+      echo -e "5. ${GREEN} Context cache synchronisation ${END}"
+   else 
+      echo -e "5. ${RED} Context cache failure ${END}"
+fi

@@ -1,0 +1,8 @@
+
+- expansion
+
+  this is an +annotation 
+
+  this is NOT a + annotation
+
+   Note that this test doesn't actually test whether this works, except by manual inspection

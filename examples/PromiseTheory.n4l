@@ -1,0 +1,71 @@
+
+-- representing promises and impositions in N4L
+
+  #############################################################
+
+  :: promise of the first kind ::
+
+  X (offering)  promise offer body text unconditionally
+  Y (accepting) promise acceptance body text
+
+  promise offer body text (expresses) ham
+              "           (expresses) eggs
+              "           (expresses) cabbage
+              "           (has intended promisee) Y
+              "           (remark) This is entirely voluntary
+
+  promise acceptance body text (expresses) cabbage
+              "           (has intended promiser) any
+
+  third party (assesses) promise offer body text
+         "    (assesses) promise requirement body text
+         "    (may be influenced by) promise offer body text
+         "    (may be influenced by) promise acceptance body text
+         "    (may be influenced by) Event: Promise from X to Y accepted
+
+  Event: Promise from X to Y accepted (has overlap) cabbage
+                   "                  (has promiser) X
+                   "                  (has promisee) Y
+                   "                  (observed by) third party
+                   "                  (remark) starts with unconditional offer
+
+  # There is now a voluntary causal path of influence:
+  #    promiser -> offer --> acceptance --> promisee
+  #############################################################
+
+  :: imposition ::
+
+  X (imposes) imposing body text
+  Y (accepts) imposee text
+
+  imposing body text (expresses) demand for tariff
+            "        (expresses) special offer
+            "        (note) a promise with conditions may be an imposition
+
+  imposee text?  (expresses) ?
+                 (note) this is still completely voluntary
+
+  Event: Imposition from X to Y (has overlap) unpredictable/unknown?
+                                (note) Y may drop the ball thrown without warning
+
+  third party (observes) imposing body text
+         "    (observes) imposee text
+         "    (may be influenced by) imposing body text
+         "    (may be influenced by) imposee text
+         "    (may be influenced by) Event: Imposition from X to Y 
+
+  # There is not necessarily a causal effect path between these, 
+  # if the imposee doesn't accept the imposition
+  #############################################################
+
+  +:: accusation ::
+
+  accusation (is a special case of) imposition
+      "      (expresses)
+
+  accusing text (has example) your mother was a hamster
+          "     (has example) your father smells of elderberries
+          "     (has accusee) Y
+
+  # Special case of imposition, without necessary causal effect path
+  # if the imposee / third parties don't accept

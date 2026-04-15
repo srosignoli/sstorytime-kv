@@ -1,0 +1,30 @@
+
+- Evaluate the integral 
+
+  :: _sequence_ , mathematics , integration, integrate , differentiate under integral::
+
+  "Evaluate \( I(\nu) = \int_0^\infty \; \nu^\frac{1}{2}\, e^{-\nu}\; d\nu \)" (note) "\(I(\nu)\) is not to be understood as a function of \(\nu\)"
+
+    " (note) The integrand is fully analytic so we are free to move the limit and differentiate under the integral sign etc.
+  
+  "Let \( \nu = \lim_{a\rightarrow 0} \left\lbrack \left( \nu^\frac{1}{2} + \frac{a}{2} \right)^2 - \frac{a^2}{4} \right\rbrack \)"
+
+  "Then \( I(\nu) = \lim_{a\rightarrow 0} \int_0^\infty  \nu^\frac{1}{2} \exp\left(- \left( \nu^\frac{1}{2} + \frac{a}{2} \right)^2 - \frac{a^2}{4} \right) d\nu  \)"
+
+  "\( I(\nu) = \lim_{a\rightarrow 0} -\frac{d}{da} \;  \int_0^\infty  \exp\left(- \left( \nu^\frac{1}{2} + \frac{a}{2} \right)^2 - \frac{a^2}{4} \right) d\nu   \)"
+  
+  "Let \( u = (\nu^\frac{1}{2} + \frac{a}{2}), du = \frac{1}{2}\nu^{-\frac{1}{2}} d\nu \)" (note) "i.e. \( (u - \frac{a}{2})= \nu^\frac{1}{2},   d\nu = 2(u - \frac{a}{2})du \)"
+
+  "Now: \( I(u) = \lim_{a\rightarrow 0} - \frac{d}{da} \;  \int_0^\infty du\; \left(u - \frac{a}{2}\right) e^{- u^2+ a^2/4} \)"
+
+  "We know by polar coordinates that: \( \int_0^\infty \; e^{-r^2} dr  = \sqrt{\pi}/2 \)"
+
+  "Integrating by parts: \( \int_0^\infty u e^{-u^2}\,du = -\frac{1}{2} \lbrack e^{-u^2}\rbrack_0^\infty = \frac{1}{2} \)"
+
+  "Thus: \( I(u) = \lim_{a\rightarrow 0} -2\frac{d}{da} \;\left\lbrack (\frac{1}{2}-\frac{a}{2}\cdot\frac{1}{2}\sqrt{\pi}) e^{a^2/4} \right\rbrack    \)"
+
+  "\( I(u) = -2  \lim_{a\rightarrow 0}  \;\left\lbrack \frac{2a}{4} (\frac{1}{2} - \ldots) - \frac{1}{4}\sqrt{\pi}   \right\rbrack\;e^{a^2/4} \)"
+
+  "Finally, taking the limit, \(I \rightarrow  \frac{\sqrt \pi}{2}\)"
+
+  -:: _sequence_ ::

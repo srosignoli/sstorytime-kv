@@ -1,0 +1,59 @@
+
+--unicode notes stub
+
+  :: general ::
+
+  Unicode is a "two-byte per character" way of encoding text for all kinds of alphabets and non-alphabetic languages.
+
+  Unicode is like a modern ASCII character set.
+
+  There are often several ways to represent the same string. For example, an é [e-acute] can be represented in a string as a single rune ["\u00e9"] or an ’e' followed by an acute accent [“e\u0301”]. According to the Unicode standard, these two are “canonically equivalent” and should be treated as equal.
+
+ :: programmming methods, go, golang, programming ::
+
+ # Unicode is key to text based representation, so we'd better get it right
+
+ unicode in golang  (note) https:/go.dev/blog/normalization
+      "             (note) https:/stackoverflow.com/questions/26722450/remove-diacritics-using-go
+
+
+  :: gotchas ::
+
+Using a byte-to-byte comparison to determine equality would clearly not give the right result for these two strings. Unicode defines a set of normal forms such that if two strings are canonically equivalent and are normalized to the same normal form, their byte representations are the same.
+
+Unicode also defines a “compatibility equivalence” to equate characters that represent the same characters, but may have a different visual appearance. For example, the superscript digit ‘⁹’ and the regular digit ‘9’ are equivalent in this form.
+
+"For each of these two equivalence forms, Unicode defines a composing and decomposing form. The former replaces runes that can combine into a single rune with this single rune. The latter breaks runes apart into their components. This table shows the names, all starting with NF, by which the Unicode Consortium identifies these forms:
+  	Composing 	Decomposing
+Canonical equivalence 	NFC 	NFD
+Compatibility equivalence 	NFKC 	NFKD"
+
+  ::  removing accents and diacritics ::
+
+  The unaccent package in postgres
+         "    (in-linux-pkg) postgres-contrib
+
+# this contains parentheses so we have to quote it
+
+"Can you tell the difference between ‘K’ ("\u004B") and ‘K’ (Kelvin sign “\u212A”) or ‘Ω’ ("\u03a9") and ‘Ω’ (Ohm sign “\u2126”)? It is easy to overlook the sometimes minute differences between variants of the same underlying character. It is generally a good idea to disallow such variants in identifiers or anything where deceiving users with such look-alikes can pose a security hazard."
+
+The compatibility normal forms, NFKC and NFKD, will map many visually nearly identical forms to a single value. Note that it will not do so when two symbols look alike, but are really from two different alphabets. For example the Latin ‘o’, Greek ‘ο’, and Cyrillic ‘о’ are still different characters as defined by these forms.
+
+"The compatibility normal forms, NFKC and NFKD, will map many visually nearly identical forms to a single value. Note that it will not do so when two symbols look alike, but are really from two different alphabets. For example the Latin ‘o’, Greek ‘ο’, and Cyrillic ‘о’ are still different characters as defined by these forms."
+
+    "unicode"                          (resource) unicode in go
+    "golang.org/x/text/transform"      (resource)        "
+    "golang.org/x/text/unicode/norm"   (resource)        "
+
+'The internet standard for comparing strings of different character sets is called "PRECIS" i.e. Preparation, Enforcement, and Comparison of Internationalized Strings in Application Protocols and is documented in RFC7564. There is also a Go implementation at golang.org/x/text/secure/precis.'
+
+  :: how to deal in postgres ::
+
+     "unaccent()" function (use-for) removing accents from unicode in postgres database
+
+     $PREV.2  (e.g.) "RETURN translate($1, 'éçàêè...', 'ecaee...') ;"
+	"     (e.g.)   "select S from Node where translate(S,'ǎáà','aaa') like '%shang%';
+
+  introduction to database issues (url) "https://www.enterprisedb.com/blog/unicode-normalization-postgresql-13"
+
+                   "              (url) "https://tapoueh.org/blog/2017/07/playing-with-unicode/"

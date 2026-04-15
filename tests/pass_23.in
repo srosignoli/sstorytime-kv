@@ -1,0 +1,6 @@
+
+- test label reference errors
+
+@mylabel this text (then) something else
+
+$ mylabel.1  // this is a typo but not wrong

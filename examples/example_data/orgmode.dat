@@ -1,0 +1,36 @@
+:PROPERTIES:
+:ID:       cfa4abc5-24f7-4ddf-9454-3a487c1e107d
+:CREATED:  <2025-04-03 Thu 22:43>
+:END:
+#+title: How I Org
+
+* A day in the life
+
+Get up, stand up, grab my phone, stumble to the kitchen, make coffee, take medicine unlock phone check off meds from my Orgzly home screen widget.
+
+
+
+So, yeah, I am probably interacting with org-mode within the first hour or so of the day.
+
+Morning routine happens and get the kids to school. I might have captured a few notes using Orgzly during the news or while chatting with the family.
+
+I get to my desk. Emacs is already full screen on my central screen probably open to yesterdays "work log" note[fn:1].
+
+I run ~org-roam-goto-today~ and select my work log capture template (=wll= ... it's semantic, work, log, log)[fn:2]. I land at a new file for today it's setup with broiler plate stuff.
+
+I run =org-roam-capture-today= and select the capture template for my first meeting of the day. =wm<Product>s= (work meeting <Product> sync/stand-up)[fn:3].
+
+
+* Other writings
+- https://bladybla.org/2024/01/05/how-i-org-in-2024/
+- https://bladybla.org/2023/03/25/how-i-org-in-2023/
+- https://bladybla.org/2023/03/13/reflecting-on-my-history-with-org-mode-in-2023/
+- https://bladybla.org/2016/04/26/how-i-org-with-spacemacs/
+
+* Footnotes
+
+[fn:1] Maybe I just walked away, if so it's open to a buffer asking me what I want to do with the idle time since I had an open clock session. Usually I just discard that idle time and clock out of the previous task I was on. ADHD is real, this a fairly common if not often occurrence.
+
+[fn:2] Nick, why are you stuttering? Because it used to be just work log (=wl=) but then I added some capture templates for specific work log captures and I wanted to keep the generic template to as similar key binding as possible so that it was not difficult to adjust my muscle memory.
+
+[fn:3] It's no secret, <Product> here is =c= for my beloved [[id:3ffe6747-77c1-412a-851f-115a3782fa65][CFEngine]].

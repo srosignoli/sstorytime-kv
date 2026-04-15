@@ -1,0 +1,50 @@
+
+- friend network
+
+Mark (fr)  Mandy 
+  "  (fr)  Silvy
+  "  (fr)  Brent
+  "  (fr)  Zhao
+  "  (fr)  Doug
+  "  (fr)  Tore
+  "  (fr)  Joyce
+  "  (fr)  Mike
+  "  (fr)  Carol
+  "  (fr)  Ali
+  "  (fr)  Matt
+  "  (fr)  Bjørn
+  "  (fr)  Tamar
+  "  (fr)  Kat
+  "  (fr)  Hans
+
+
+Mike (fr) Mark
+  "  (fr) Jane1
+  "  (fr) Jane2
+  "  (fr) Jan
+  "  (fr) Alfie
+  "  (fr) Jungi
+  "  (fr) Peter
+  "  (fr) Paul
+
+Jan  (fr) Adam 
+  "  (fr) Jane1
+  "  (fr) Jane
+
+
+Adam (fr) Company of Friends
+  "  (fr) Paul
+  "  (fr) Matt
+  "  (fr) Billie
+  "  (fr) Chirpy Cheep Cheep
+  "  (fr) Taylor Swallow
+
+
+Company of Friends (empl-of) Robo1 
+         "         (empl-of) Robo2
+         "         (empl-of) Bot1
+         "         (empl-of) Bot2
+         "         (empl-of) Bot3
+         "         (empl-of) Bot4
+         "         (empl-of) Rob1Bot21
+

@@ -1,0 +1,10 @@
+
+-inverse stypes
+
+ one (causes,0.2) two
+
+ one (causes) two
+
+ two (is caused by,3.6) one
+
+ # This shouldn't result in two links

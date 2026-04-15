@@ -1,0 +1,7 @@
+
+# Test self-loop detection
+
+- self looping
+
+  A (affects) A
+

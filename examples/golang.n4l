@@ -1,0 +1,44 @@
+
+-golang programming
+
+ :: components ::
+
+ go
+ golang
+ gopath
+ go packages
+ go modules
+
+ :: features ::
+
+ maps  (same as) associative arrays
+ runes (implements) unicode
+
+ :: remarks ::
+
+Golang is an easy to write language without too many strict syntax issues.
+It's not a free format language, mainly because of placement of braces.
+It's opinionated without always explaining why. 
+Documentation often assumes you already know go quite well and is more interested in version changes than in a pedagogical explanation.
+
+ snide remark (note) Programmers are supposed to offer their lives to learning it.
+
+
+ basic example (same as) hello world
+
+ hello world (ex) 'package main
+
+import (
+    "dependency 1"
+    "dependency 2"
+    "fmt"
+)
+
+func main () {  // brace must go here
+
+      fmt.Println("Hello world")
+}'
+
+ :: bureaucracy, setup, compiling ::
+
+ 

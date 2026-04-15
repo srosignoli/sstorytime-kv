@@ -1,0 +1,103 @@
+
+-CFEngine notes
+
+  // to check this, run   ../src/N4L (-v) CFEngine.n4l
+
+  #####################################################
+
+  :: general, intro ::
+
+ CFEngine is used for automating the configuration and maintenance of computer systems.
+
+ CFEngine employs autonomous agents whose function is to keep certain "promises".
+
+
+  #####################################################
+
+  :: promises ::
+
+ Promise Theory  (about)  How autonomous entities called agents can declare their intended behaviour.
+         "       (note)   Promise Theory has nothing a priori to do with "promises" in programming languages like Javascript, though programming promise functionality is compatible with the Promise Theory definition..
+
+ CFEngine promises  (def)  Declarations of ***"intended outcome" or ***"desired state".
+
+         "      (note) Some might call promises ***"rules", but they are only self-imposed rules on the agents.
+         "      (note)  The agents can only promise its own intent to maintain state. If the operating sytem blocks an agent, or some other process interferes then even though it can keep its own promise to try and repair a deviant state, it can't promise that the system will end up according to specification.
+
+   A promise type (def) the kind of promise, usually a type of system resource. 
+
+For example, the files type promise centers around managing file presence, content, and attributes while vars type promises hold data.
+
+: access, build_xpath, classes, commands, databases, defaults , delete_attribute, delete_lines , delete_text , delete_tree , field_edits , files , guest_environments , insert_lines , insert_text , insert_tree , measurements , meta , methods , packages , processes , replace_patterns , reports , roles , services , set_attribute , set_text , storage , users , vars :
+
+
+  #####################################################
+
+     :: syntax ::
+
+   CFEngine syntax   (description) CFEngine promises
+
+   CFEngine promises (description) The desired state and/or maintainence schedule of an affected system resource / object
+
+
+   CFEngine promise type (description) A system outcome, usually a resource configuration, but maybe a message or behaviour.
+               "         (e.g.) vars
+               "         (e.g.) classes
+               "         (e.g.) files
+               "         (e.g.) databases
+
+
+   files (attr) action
+     "   (attr) classes
+     "   (attr) acl 
+     "   (attr) copy_from
+
+  #####################################################
+
+  :: promise types, resources, types ::
+
+
+- edit_line bundles
+
+  edit_line bundle (may contain) delete_lines
+                 " (may contain) field_edits
+                 " (may contain) insert_lines
+                 " (may contain) replace_patterns
+
+
+
+ :: editing files,  edit_line, normal ordering ::
+
+   // the ** annotation makes "editfiles meta" a special case of meta
+
+   editfiles **meta             (sh-precede)  vars
+   editfiles **vars             (sh-precede)  defaults
+   editfiles **defaults         (sh-precede)  classes
+   editfiles **classes          (sh-precede)  delete_lines
+   editfiles **delete_lines     (sh-precede)  field_edits
+   editfiles **field_edits      (sh-precede)  insert_lines
+   editfiles **insert_lines     (sh-precede)  replace_patterns
+   editfiles **replace_patterns (sh-precede)  reports
+   editfiles **reports          (comes after) replace_patterns
+
+
+  #####################################################
+
+   :: syntax tips ::
+
+    Use basic promises rather than embedding shell commands
+
+  #####################################################
+
+   :: scenarios ::
+
+     Suppose you have 1000 machines of different kinds ...
+
+  #####################################################
+
+   :: user stories ::
+
+      There was this one time, at LinkedIn camp....
+
+  #####################################################
+

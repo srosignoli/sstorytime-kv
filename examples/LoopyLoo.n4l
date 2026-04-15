@@ -1,0 +1,10 @@
+
+-loop test
+
+ L0 (then) L1 (then) L2 (then) L3 (then) L1
+ L3 (then) L4 (then) L5 (then) L6 (then) L7
+ L7 (then) L5
+ L7 (then) L8
+ L7 (then) L9
+ L8 (then) L5
+

@@ -1,0 +1,45 @@
+
+- multi slit interference
+
+ :: physics, connectivity, path example ::
+
+start  (fwd) door
+    "  (fwd) port
+    "  (fwd) hole
+    "  (fwd) gate
+
+door (fwd) passage
+  "  (fwd) road
+  "  (fwd) river
+
+port (fwd) river
+  "  (fwd) tram
+
+hole (fwd) tram
+
+gate (fwd) tram
+  "  (fwd) bike
+
+passage (fwd) target 1
+road    (fwd) target 2
+
+river  (fwd) target 3
+tram   (fwd)  "
+bike   (fwd)   "
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

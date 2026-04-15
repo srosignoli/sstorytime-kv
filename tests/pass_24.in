@@ -1,0 +1,9 @@
+
+- test label reference errors
+
+@mylabel this text (then) something else
+
+@newlabel  "   (then) another
+
+
+

@@ -1,0 +1,7 @@
+- test label reference errors
+
+@mylabel this text (then) something else
+
+@newlabel $mylabel.1   (then) another
+
+
