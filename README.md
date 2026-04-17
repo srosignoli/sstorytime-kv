@@ -1,6 +1,6 @@
 # SStorytime-KV
 
-A port of [SStorytime](../SStorytime-main) that replaces the PostgreSQL backend
+A port of [SStorytime](https://github.com/markburgess/SSTorytime/) that replaces the PostgreSQL backend
 with [BadgerDB](https://github.com/dgraph-io/badger) — an embedded, serverless
 key-value store.  No PostgreSQL installation, no Docker, no credentials required.
 

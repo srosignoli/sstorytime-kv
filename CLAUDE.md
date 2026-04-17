@@ -2,7 +2,7 @@
 
 ## What This Project Is
 
-SStorytime-KV is a port of SStorytime-main that replaces PostgreSQL with BadgerDB (an embedded key-value store). It implements the same N4L (Narrative for Learning) language parser and graph database, but with no external database server required.
+SStorytime-KV is a port of SStorytime that replaces PostgreSQL with BadgerDB (an embedded key-value store). It implements the same N4L (Narrative for Learning) language parser and graph database, but with no external database server required.
 
 ## Repository Layout
 
