@@ -13,7 +13,7 @@ import (
 	"flag"
 	"strings"
 
-        SST "SSTorytimeKV/pkg/SSTorytime"
+        SST "github.com/srosignoli/sstorytime-kv/pkg/SSTorytime"
 )
 
 //******************************************************************

@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"SSTorytimeKV/pkg/SSTorytime"
+	"github.com/srosignoli/sstorytime-kv/pkg/SSTorytime"
 	"os"
 	"testing"
 )

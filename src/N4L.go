@@ -18,7 +18,7 @@ import (
 	"sort"
 	"strconv"
 
-        SST "SSTorytimeKV/pkg/SSTorytime"
+        SST "github.com/srosignoli/sstorytime-kv/pkg/SSTorytime"
 )
 
 //**************************************************************

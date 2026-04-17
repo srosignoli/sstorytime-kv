@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"SSTorytimeKV/pkg/SSTorytime"
+	"github.com/srosignoli/sstorytime-kv/pkg/SSTorytime"
 )
 
 var testStore *SSTorytime.BadgerKV

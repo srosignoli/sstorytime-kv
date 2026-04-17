@@ -17,7 +17,7 @@ func main() {
 	s = regexp.MustCompile(`_ "github\.com/lib/pq"\n`).ReplaceAllString(s, "")
 	s = regexp.MustCompile(`"io/ioutil"\n`).ReplaceAllString(s, "")
     // Add store import
-	s = regexp.MustCompile(`"math"\n`).ReplaceAllString(s, "\"math\"\n\tstore \"SSTorytimeKV/pkg/store\"\n")
+	s = regexp.MustCompile(`"math"\n`).ReplaceAllString(s, "\"math\"\n\tstore \"github.com/srosignoli/sstorytime-kv/pkg/store\"\n")
 
 	// Remove DB *sql.DB from PoSST
 	s = regexp.MustCompile(`	DB \*sql\.DB\n\tKV GraphStore\n`).ReplaceAllString(s, "\tKV GraphStore\n")
