@@ -380,8 +380,8 @@ func TestContextPersistence_MissingNameFallback(t *testing.T) {
 	defer teardown()
 
 	name, ptr := sst.KV.GetContextByName("nonexistent")
-	if ptr != 0 {
-		t.Errorf("missing context: expected ptr=0, got %d", ptr)
+	if ptr != -1 {
+		t.Errorf("missing context: expected ptr=-1 (not found), got %d", ptr)
 	}
 	if name != "nonexistent" {
 		t.Errorf("missing context: expected name passthrough, got %q", name)

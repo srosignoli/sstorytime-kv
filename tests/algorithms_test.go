@@ -240,3 +240,49 @@ func TestGetConstraintConePathsAsLinks(t *testing.T) {
 		t.Errorf("Count mismatch: %d vs %d", count, len(paths))
 	}
 }
+
+// =====================================================================
+// TryContext persistence tests
+// =====================================================================
+
+func TestTryContextPersistence(t *testing.T) {
+	sst := setupTestStore(t)
+	defer teardownTestStore(sst)
+
+	SSTorytime.MemoryInit() // initializes CONTEXT_TOP=1 (reserve 0 as "no context")
+
+	// First call: new context — must persist and return a non-zero ptr.
+	ptr1 := SSTorytime.TryContext(sst, []string{"recipes"})
+	if ptr1 == 0 {
+		t.Fatal("TryContext returned 0 (no-context sentinel) for a real context string")
+	}
+
+	// In-memory round-trip.
+	got := SSTorytime.GetContext(ptr1)
+	if got == "unknown context" {
+		t.Errorf("GetContext(%d) returned 'unknown context'; in-memory registration failed", ptr1)
+	}
+
+	// Second call with same context must be idempotent.
+	ptr2 := SSTorytime.TryContext(sst, []string{"recipes"})
+	if ptr2 != ptr1 {
+		t.Errorf("TryContext not idempotent: first=%d second=%d", ptr1, ptr2)
+	}
+
+	// Simulate a new session: clear in-memory state, keep DB intact.
+	SSTorytime.CONTEXT_DIRECTORY = nil
+	SSTorytime.CONTEXT_DIR = make(map[string]SSTorytime.ContextPtr)
+	SSTorytime.CONTEXT_TOP = 1
+
+	// After clearing memory, TryContext must reload from DB and return the same ptr.
+	ptr3 := SSTorytime.TryContext(sst, []string{"recipes"})
+	if ptr3 != ptr1 {
+		t.Errorf("After memory reset, TryContext returned %d, expected %d (from DB)", ptr3, ptr1)
+	}
+
+	// GetContext must work after DB reload.
+	got2 := SSTorytime.GetContext(ptr3)
+	if got2 == "unknown context" {
+		t.Errorf("GetContext(%d) returned 'unknown context' after DB reload", ptr3)
+	}
+}

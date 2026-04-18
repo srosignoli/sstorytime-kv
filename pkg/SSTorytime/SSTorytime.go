@@ -93,6 +93,13 @@ func MemoryInit() {
 		NODE_DIRECTORY.N3grams = make(map[string]ClassedNodePtr)
 	}
 
+	// Reserve ptr=0 as the "no context" sentinel.
+	// CONTEXT_DIRECTORY is indexed by ContextPtr, so pad index 0 with a dummy
+	// entry to keep the invariant: ptr == slice index.
+	CONTEXT_DIRECTORY = []ContextDirectory{{}}
+	CONTEXT_DIR = make(map[string]ContextPtr)
+	CONTEXT_TOP = 1
+
 	for i := 1; i < N_GRAM_MAX; i++ {
 
 		STM_NGRAM_FREQ[i] = make(map[string]float64)
@@ -1133,29 +1140,6 @@ func GraphToDB(sst PoSST, wait_counter bool) {
 }
 
 // **************************************************************************
-//  Uploading memory cache to database
-// **************************************************************************
-
-func UploadNodeToDB(sst PoSST, org Node) {
-	return
-
-}
-
-// **************************************************************************
-
-func UploadArrowToDB(sst PoSST, arrow ArrowPtr) {
-	return
-
-}
-
-// **************************************************************************
-
-func UploadInverseArrowToDB(sst PoSST, arrow ArrowPtr) {
-	return
-
-}
-
-// **************************************************************************
 
 func UploadContextsToDB(sst PoSST) {
 
@@ -1170,209 +1154,9 @@ func UploadContextToDB(sst PoSST, contextstring string, ptr ContextPtr) ContextP
 	return sst.KV.UploadContext(contextstring, ptr)
 }
 
-//**************************************************************
-
-func UploadPageMapEvent(sst PoSST, line PageMap) {
-	return
-
-}
-
 //
 // db_upload.go
 //
-
-//**************************************************************
-//
-// db_insertion.go
-//
-//**************************************************************
-
-func FormDBNode(sst PoSST, n Node) string {
-
-	// Add node version setting explicit CPtr value, note different function call
-	// We use this function when we ARE managing/counting CPtr values ourselves
-
-	var qstr, seqstr string
-
-	n.L, n.NPtr.Class = StorageClass(n.S)
-
-	cptr := n.NPtr.CPtr
-
-	es := SQLEscape(n.S)
-	ec := SQLEscape(n.Chap)
-
-	if n.Seq {
-		seqstr = "true"
-	} else {
-		seqstr = "false"
-	}
-
-	qstr = fmt.Sprintf("SELECT InsertNode(%d,%d,%d,'%s','%s',%s);\n", n.L, n.NPtr.Class, cptr, es, ec, seqstr)
-	return qstr
-}
-
-// **************************************************************************
-
-// **************************************************************************
-
-// **************************************************************************
-
-func AppendDBLinkToNode(sst PoSST, n1ptr NodePtr, lnk Link, sttype int) bool {
-    // We already natively add links cleanly in store_crud.go 
-	// This acts as a proxy for raw node link insertion from string parsers.
-	var empty NodePtr
-	AppendLinkToNode(n1ptr, lnk, empty)
-	return true
-}
-
-// **************************************************************************
-
-func AppendDBLinkToNodeCommand(sst PoSST, n1ptr NodePtr, lnk Link, sttype int) string {
-
-	// Want to make this idempotent, because SQL is not (and not clause)
-
-	if sttype < -EXPRESS || sttype > EXPRESS {
-		fmt.Println(ERR_ST_OUT_OF_BOUNDS, sttype)
-		os.Exit(-1)
-	}
-
-	if n1ptr == lnk.Dst {
-		return ""
-	}
-
-	//                       Arr,Wgt,Ctx,  Dst
-	linkval := fmt.Sprintf("(%d, %f, %d, (%d,%d)::NodePtr)", lnk.Arr, lnk.Wgt, lnk.Ctx, lnk.Dst.Class, lnk.Dst.CPtr)
-
-	literal := fmt.Sprintf("%s::Link", linkval)
-
-	link_table := STTypeDBChannel(sttype)
-
-	qstr := fmt.Sprintf("UPDATE NODE SET %s=array_append(%s,%s) WHERE (NPtr).CPtr = '%d' AND (NPtr).Chan = '%d' AND (%s IS NULL OR NOT %s = ANY(%s));\n",
-		link_table,
-		link_table,
-		literal,
-		n1ptr.CPtr,
-		n1ptr.Class,
-		link_table,
-		literal,
-		link_table)
-
-	return qstr
-}
-
-// **************************************************************************
-
-func AppendDBLinkArrayToNode(sst PoSST, nptr NodePtr, array string, sttype int) string {
-
-	// Want to make this idempotent, because SQL is not (and not clause)
-
-	if sttype < -EXPRESS || sttype > EXPRESS {
-		fmt.Println(ERR_ST_OUT_OF_BOUNDS, sttype)
-		os.Exit(-1)
-	}
-
-	link_table := STTypeDBChannel(sttype)
-
-	qstr := fmt.Sprintf("UPDATE NODE SET %s='%s' WHERE (NPtr).CPtr = '%d' AND (NPtr).Chan = '%d';\n",
-		link_table,
-		array,
-		nptr.CPtr,
-		nptr.Class)
-
-	return qstr
-}
-
-//
-// db_insertion.go
-//
-
-// **************************************************************
-//
-// postgres_types_functions.go
-//
-// **************************************************************
-
-const NODEPTR_TYPE = "CREATE TYPE NodePtr AS  " +
-	"(                    " +
-	"Chan     int,        " +
-	"CPtr     int         " +
-	")"
-
-const LINK_TYPE = "CREATE TYPE Link AS  " +
-	"(                    " +
-	"Arr      int,        " +
-	"Wgt      real,       " +
-	"Ctx      int,        " +
-	"Dst      NodePtr     " +
-	")"
-
-const NODE_TABLE = "CREATE UNLOGGED TABLE IF NOT EXISTS Node " +
-	"( " +
-	"NPtr      NodePtr,        \n" +
-	"L         int,            \n" +
-	"S         text,           \n" +
-	"Search    TSVECTOR GENERATED ALWAYS AS (to_tsvector('english',S)) STORED,\n" +
-	"UnSearch  TSVECTOR GENERATED ALWAYS AS (to_tsvector('english',sst_unaccent(S))) STORED,\n" +
-	"Chap      text,           \n" +
-	"Seq       boolean,        \n" +
-	I_MEXPR + "  Link[],         \n" + // Im3
-	I_MCONT + "  Link[],         \n" + // Im2
-	I_MLEAD + "  Link[],         \n" + // Im1
-	I_NEAR + "  Link[],         \n" + // In0
-	I_PLEAD + "  Link[],         \n" + // Il1
-	I_PCONT + "  Link[],         \n" + // Ic2
-	I_PEXPR + "  Link[]          \n" + // Ie3
-	")"
-
-const PAGEMAP_TABLE = "CREATE UNLOGGED TABLE IF NOT EXISTS PageMap " +
-	"( " +
-	"Chap     Text,  " +
-	"Alias    Text,  " +
-	"Ctx      int,   " +
-	"Line     Int,   " +
-	"Path     Link[] " +
-	")"
-
-const ARROW_DIRECTORY_TABLE = "CREATE UNLOGGED TABLE IF NOT EXISTS ArrowDirectory " +
-	"(    " +
-	"STAindex int,           " +
-	"Long text,              " +
-	"Short text,             " +
-	"ArrPtr int primary key  " +
-	")"
-
-const ARROW_INVERSES_TABLE = "CREATE UNLOGGED TABLE IF NOT EXISTS ArrowInverses " +
-	"(    " +
-	"Plus int,  " +
-	"Minus int,  " +
-	"Primary Key(Plus,Minus)" +
-	")"
-
-const LASTSEEN_TABLE = "CREATE TABLE IF NOT EXISTS LastSeen " +
-	"(    " +
-	"Section text," +
-	"NPtr    NodePtr," +
-	"First   timestamp," +
-	"Last    timestamp," +
-	"Delta   real," +
-	"Freq    int" +
-	")"
-
-const CONTEXT_DIRECTORY_TABLE = "CREATE TABLE IF NOT EXISTS ContextDirectory " +
-	"(    " +
-	"Context text,            " +
-	"CtxPtr  int primary key  " +
-	")"
-
-const APPOINTMENT_TYPE = "CREATE TYPE Appointment AS  " +
-	"(                    " +
-	"Arr    int," +
-	"STType int," +
-	"Chap   text," +
-	"Ctx    int," +
-	"NTo    NodePtr," +
-	"NFrom  NodePtr[]" +
-	")"
 
 // **************************************************************************
 
@@ -1388,203 +1172,6 @@ func CreateTable(sst PoSST, defn string) bool {
 	return true
 }
 
-// **************************************************************************
-
-func DefineStoredFunctions(sst PoSST) {
-	return
-
-	// NB! these functions are in "plpgsql" language, NOT SQL. They look similar but they are DIFFERENT!
-
-	// This is not a pretty function, but in order to interface go-types to pg-types, we need to evaluate it
-	// like this...
-
-	// Force for managed input
-
-	// Without controlling nptr
-
-	// Insert Context from API
-
-	// For lookup include name,chapter,context,arrow
-
-	// If there are no arrows, we only need to look for the Node context in lp1 for "empty" == 0
-
-	// If there are arrows
-
-	// Construct an empty link pointing nowhere as a starting node
-
-	// Construct an empty link pointing nowhere as a starting node
-
-	// Construct search by sttype. since table names are static we need a case statement
-
-	// Get the nearest neighbours as NPtr, with respect to each of the four STtype
-
-	// Basic quick neighbour probe
-
-	// Get the forward cone / half-ball as NPtr
-
-	// Next, continue, foreach
-
-	// Orthogonal (depth first) paths from origin spreading out
-
-	// Return end of path branches as aggregated text summaries
-
-	// limit recursion explosions
-
-	// set end of path as return val
-
-	// Add to the path and descend into new link
-
-	// when we return, we reached the end of one path
-
-	// append full path to list of all paths, separated by newlines
-
-	// Typeless cone searches
-
-	// select AllPathsAsLinks('(4,1)',3)
-
-	// SumAllPaths
-
-	// Get *All* in/out Links
-
-	// Check if linkpath representation is just one item
-
-	// exact match
-
-	// Matching context strings with fuzzy criteria. The policy/notes expression is db_set
-	// the client/lookup set is user_set - both COULD use AND expressions.
-	// We are looking for sets that overlap for a true result
-
-	// If no constraints at all, then match
-
-	// Shouldn't happen anymore
-
-	// Convert context ptr into a list from the new factored cache
-
-	// If there is a constraint, but no db membership, then no match
-
-	// if both are empty, then match
-
-	// clean and unaccent sets
-
-	// First split check AND strings in the notes
-
-	// end_result = MatchANDExpression(and_list,client)
-
-	// check each and expression first
-
-	// AND need an exact match
-
-	// if still not match, check any left overs, client AND matches are still unresolved
-
-	// now we can look at substring partial matches
-
-	// substring too greedy if there is a .
-
-	// Matching integer ranges
-
-	// empty arrows
-
-	// exact match
-
-	// Helper to find arrows by type
-
-	// NC version
-
-	//
-
-	//"  RAISE NOTICE 'VALUE= %',value;\n"+
-
-	// ...................................................................
-	// Now add in the more complex context/chapter filters in searching
-	// ...................................................................
-
-	// A more detailed path search that includes checks for chapter/context boundaries (NC/C functions)
-	// SumAllNCPaths - a filtering version of the SumAllPaths recursive helper function, slower but more powerful
-
-	// We order the link types to respect the geometry of the temporal links
-	// so that (then) will always come last for visual sensemaking
-
-	// Get *All* in/out Links
-
-	// ...................................................................
-	// Now add in the more complex context/chapter filters in searching
-	// ...................................................................
-
-	// A more detailed path search that includes checks for chapter/context boundaries (NC/C functions)
-	// with a start set of more than one node
-
-	// Aggregate array of starting set
-
-	// ...................................................................
-	// Now add in the more complex context/chapter filters in searching
-	// ...................................................................
-
-	// A more detailed path search that includes checks for chapter/context boundaries (NC/C functions)
-	// with a start set of more than one node
-
-	// Aggregate array of starting set
-
-	// ...................................................................
-	// Now add in the more complex context/chapter filters in searching
-	// ...................................................................
-
-	// Generalized path search
-	// SumConstraintPaths - a filtering version of the SumAllPaths recursive helper function, slower but more powerful
-
-	// ****
-	// Fully filtering version of the neighbour scan
-	// ****
-
-	// ****
-	// An NC/C filtering version of the neighbour scan
-	// ****
-
-	// This one includes an NCC chapter and context filter so slower!
-
-	// This one includes an NC chapter filter
-
-	// **************************************
-	// Looking for hub / appointed node matroid search
-	// **************************************
-
-	// **************************************
-	// Maintenance/deletion transactions
-	// **************************************
-
-	// First get all NPtrs contained in the chapter for deletion
-	// To avoid deleting overlaps, select only the automorphic links
-
-	// Look for overlapping chapters
-
-	// Remove the chapter reference
-
-	// delete reference links
-
-	// ************ LAST SEEN **************'
-
-	// 1 minute dead time
-
-	// 1 minute dead time
-
-	// Finally an immutable wrapper
-
-}
-
-//
-// postgres_types_functions.go
-//
-
-// **************************************************************************
-//
-// postgres_retrieval.go
-//
-// **************************************************************************
-
-// **************************************************************************
-
-// **************************************************************************
-
-// **************************************************************************
 
 // **************************************************************************
 
@@ -5341,15 +4928,41 @@ func RegisterContext(parse_state map[string]bool, context []string) ContextPtr {
 
 func TryContext(sst PoSST, context []string) ContextPtr {
 
+	if len(context) == 0 {
+		return 0
+	}
 	ctxstr := CompileContextString(context)
-	str, ctxptr := GetDBContextByName(sst, ctxstr)
-
-	if ctxptr == -1 || str != ctxstr {
-		ctxptr = UploadContextToDB(sst, ctxstr, -1)
-		RegisterContext(nil, context)
+	if ctxstr == "" {
+		return 0
 	}
 
-	return ctxptr
+	// Check in-memory first (already registered this session).
+	if ptr, exists := CONTEXT_DIR[ctxstr]; exists {
+		return ptr
+	}
+
+	// Check DB (registered in a previous session).
+	_, dbPtr := GetDBContextByName(sst, ctxstr)
+	if dbPtr > 0 {
+		// Re-register in memory so DB and memory stay in sync.
+		var cd ContextDirectory
+		cd.Context = ctxstr
+		cd.Ptr = dbPtr
+		for int(dbPtr) >= len(CONTEXT_DIRECTORY) {
+			CONTEXT_DIRECTORY = append(CONTEXT_DIRECTORY, ContextDirectory{})
+		}
+		CONTEXT_DIRECTORY[dbPtr] = cd
+		CONTEXT_DIR[ctxstr] = dbPtr
+		if dbPtr >= CONTEXT_TOP {
+			CONTEXT_TOP = dbPtr + 1
+		}
+		return dbPtr
+	}
+
+	// New context: assign next available ptr, persist, register in memory.
+	ptr := CONTEXT_TOP
+	UploadContextToDB(sst, ctxstr, ptr)
+	return RegisterContext(nil, context)
 }
 
 // **************************************************************************
@@ -7577,37 +7190,6 @@ func PrintSTAIndex(stindex int) string {
 	const endgreen = "\x1b[0m"
 
 	return green + ty + endgreen
-}
-
-// **************************************************************************
-
-func STTypeDBChannel(sttype int) string {
-
-	// This expects the range for sttype to be unshifted 0,+/-
-
-	var link_channel string
-	switch sttype {
-
-	case NEAR:
-		link_channel = I_NEAR
-	case LEADSTO:
-		link_channel = I_PLEAD
-	case CONTAINS:
-		link_channel = I_PCONT
-	case EXPRESS:
-		link_channel = I_PEXPR
-	case -LEADSTO:
-		link_channel = I_MLEAD
-	case -CONTAINS:
-		link_channel = I_MCONT
-	case -EXPRESS:
-		link_channel = I_MEXPR
-	default:
-		fmt.Println(ERR_ILLEGAL_LINK_CLASS, sttype)
-		os.Exit(-1)
-	}
-
-	return link_channel
 }
 
 // **************************************************************************

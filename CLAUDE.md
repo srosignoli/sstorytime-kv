@@ -57,15 +57,10 @@ Cross-platform: Makefiles detect `$(OS) == Windows_NT` and append `.exe` to bina
 | Setup required | PostgreSQL server + credentials | none (DB in sst_data/) |
 | pkg/store | not present | backend interface + BadgerDB impl |
 
-## Root-Level Utility Files (NOT in Standard Build)
-
-`cleaner.go`, `cleanup.go`, `find_stubs.go`, `strip_funcs.go`, `stub_db.go` are `package main` migration tools used during the PostgreSQL→BadgerDB porting process. They manipulate `pkg/SSTorytime/SSTorytime.go` via regex to strip SQL code and inject BadgerDB calls. Run individually with `go run <file>.go` if needed. They are excluded from `make` because multiple `package main` files cannot coexist in the same directory build.
-
 ## Dependencies
 
 Notable packages in go.mod:
 - `github.com/dgraph-io/badger/v4` — embedded KV store
-- `github.com/lib/pq` — listed but should be vestigial (PostgreSQL driver, not used)
 - OpenTelemetry packages — pulled in transitively by BadgerDB
 
 ## Data Storage

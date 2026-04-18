@@ -696,7 +696,7 @@ func (store *BadgerKV) GetContextByName(name string) (string, ContextPtr) {
 	if found {
 		return name, id
 	}
-	return name, 0
+	return name, -1
 }
 
 // GetContextByPtr looks up a ContextPtr and returns its name.
