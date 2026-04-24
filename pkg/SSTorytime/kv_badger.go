@@ -437,6 +437,21 @@ func (store *BadgerKV) DeleteChapter(chapter string) error {
 		}
 	}
 
+	// Drop every pm:<chap>: row so a re-ingest of this chapter starts clean.
+	pmPrefix := pmChapPrefix(chapter)
+	store.db.View(func(txn *badger.Txn) error {
+		opts := badger.DefaultIteratorOptions
+		opts.PrefetchValues = false
+		opts.Prefix = pmPrefix
+		it := txn.NewIterator(opts)
+		defer it.Close()
+		for it.Seek(pmPrefix); it.ValidForPrefix(pmPrefix); it.Next() {
+			key := append([]byte{}, it.Item().Key()...)
+			_ = wb.Delete(key)
+		}
+		return nil
+	})
+
 	return wb.Flush()
 }
 
@@ -726,8 +741,160 @@ func (store *BadgerKV) GetFwdPaths(from NodePtr, depth int) [][]Link {
 	return [][]Link{}
 }
 
+// ── PageMap persistence ──────────────────────────────────────────────────────
+//
+// PageMap rows record the authored, per-line layout of notes: one row per
+// source line, carrying the ordered Path of links that line produced.  They
+// are read back by GetPageMap for \notes-style queries that need to reconstruct
+// the original file order with arrows resolved.
+//
+// Key layout:
+//
+//	pm:<chapter>:<line:010d>:<seq:04d>   →  JSON-encoded PageMap
+//
+// Zero-padding preserves lexicographic = numeric ordering so Badger's prefix
+// iteration yields rows in (Chap, Line) order natively.  The within-line seq
+// disambiguates duplicate rows that share the same (chapter, line) — ingestion
+// is single-writer, so seq is simply the next free slot for that prefix.
+
+const pageMapHitsPerPage = 60
+
+func pmChapPrefix(chap string) []byte {
+	return []byte("pm:" + chap + ":")
+}
+
+func pmLinePrefix(chap string, line int) []byte {
+	return []byte(fmt.Sprintf("pm:%s:%010d:", chap, line))
+}
+
+func pmKey(chap string, line int, seq uint16) []byte {
+	return []byte(fmt.Sprintf("pm:%s:%010d:%04d", chap, line, seq))
+}
+
+// SavePageMap writes a PageMap event under pm:<chap>:<line>:<seq>.  The seq
+// is allocated by scanning the existing pm:<chap>:<line>: prefix for the next
+// free slot; ingestion is single-writer (a build pass holds the DB), so no
+// race exists between the scan and the write.
+func (store *BadgerKV) SavePageMap(ev PageMap) error {
+	return store.db.Update(func(txn *badger.Txn) error {
+		prefix := pmLinePrefix(ev.Chapter, ev.Line)
+		seq := uint16(0)
+
+		opts := badger.DefaultIteratorOptions
+		opts.PrefetchValues = false
+		opts.Prefix = prefix
+		it := txn.NewIterator(opts)
+		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			seq++
+		}
+		it.Close()
+
+		val, err := json.Marshal(ev)
+		if err != nil {
+			return err
+		}
+		return txn.Set(pmKey(ev.Chapter, ev.Line, seq), val)
+	})
+}
+
+// GetPageMap returns PageMap events, optionally filtered by chapter and by
+// context tag (cn).  An empty or "any"/"%%" chap value matches every chapter.
+// Chapter matching is case-insensitive substring (mirroring upstream's
+// lower(Chap) LIKE lower('%chap%') semantics — Texere's DecodeSearchField
+// lowercases the query before it reaches us, while stored chapter names keep
+// their original casing).
+//
+// When cn is non-empty, an event matches if any of its resolved context tags
+// equals (case-insensitive) any entry in cn — mirroring the or-overlap branch
+// of the upstream match_context Postgres function.
+//
+// Paging mirrors upstream: page 1 returns rows [0, 60); page 2 returns [60,
+// 120); and so on.
 func (store *BadgerKV) GetPageMap(chap string, cn []string, page int) []PageMap {
-	return []PageMap{}
+	prefix := []byte("pm:")
+	chapAll := chap == "" || chap == "any" || chap == "%%"
+	chapLower := strings.ToLower(strings.TrimSpace(chap))
+
+	cnLower := make(map[string]bool, len(cn))
+	for _, c := range cn {
+		c = strings.TrimSpace(strings.ToLower(c))
+		if c != "" {
+			cnLower[c] = true
+		}
+	}
+
+	offset := 0
+	if page > 1 {
+		offset = (page - 1) * pageMapHitsPerPage
+	}
+
+	ctxTagCache := make(map[ContextPtr][]string)
+	lookupTags := func(ptr ContextPtr) []string {
+		if tags, ok := ctxTagCache[ptr]; ok {
+			return tags
+		}
+		name, _ := store.GetContextByPtr(ptr)
+		parts := strings.Split(name, ",")
+		tags := make([]string, 0, len(parts))
+		for _, p := range parts {
+			p = strings.TrimSpace(strings.ToLower(p))
+			if p != "" {
+				tags = append(tags, p)
+			}
+		}
+		ctxTagCache[ptr] = tags
+		return tags
+	}
+
+	var results []PageMap
+	skipped := 0
+
+	store.db.View(func(txn *badger.Txn) error {
+		opts := badger.DefaultIteratorOptions
+		opts.Prefix = prefix
+		it := txn.NewIterator(opts)
+		defer it.Close()
+
+		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			item := it.Item()
+			var ev PageMap
+			if err := item.Value(func(val []byte) error {
+				return json.Unmarshal(val, &ev)
+			}); err != nil {
+				continue
+			}
+
+			if !chapAll && !strings.Contains(strings.ToLower(ev.Chapter), chapLower) {
+				continue
+			}
+
+			if len(cnLower) > 0 {
+				tags := lookupTags(ev.Context)
+				matched := false
+				for _, t := range tags {
+					if cnLower[t] {
+						matched = true
+						break
+					}
+				}
+				if !matched {
+					continue
+				}
+			}
+
+			if skipped < offset {
+				skipped++
+				continue
+			}
+			results = append(results, ev)
+			if len(results) >= pageMapHitsPerPage {
+				break
+			}
+		}
+		return nil
+	})
+
+	return results
 }
 
 func (store *BadgerKV) GetLastSawSection() []LastSeen {

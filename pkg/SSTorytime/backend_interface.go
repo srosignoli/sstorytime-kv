@@ -29,7 +29,8 @@ type GraphStore interface {
 	// Path traversal
 	GetFwdPaths(from NodePtr, depth int) [][]Link
 
-	// Page-map retrieval (stub — populated by higher-level layers)
+	// Page-map persistence and retrieval
+	SavePageMap(ev PageMap) error
 	GetPageMap(chap string, cn []string, page int) []PageMap
 
 	// Context CRUD
