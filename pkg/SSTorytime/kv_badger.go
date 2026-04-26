@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"sync"
 
 	"github.com/dgraph-io/badger/v4"
 )
@@ -457,10 +458,20 @@ func (store *BadgerKV) DeleteChapter(chapter string) error {
 
 // ── SearchNodesByName ─────────────────────────────────────────────────────────
 
+var searchNodesByNameDeprecationOnce sync.Once
+
 // SearchNodesByName returns NodePtrs whose stored text contains textName
 // (case-insensitive substring match).  Uses the text: secondary index so only
 // index keys are scanned — no full node-value reads until a match is found.
+//
+// Deprecated: prefer (*Index).SearchByQuery, which handles stemming, accent
+// folding, CJK bigrams, and the full operator grammar (`&`, `|`, `!`, phrase,
+// proximity, prefix, exact-bounds). SearchNodesByName remains for callers
+// still on v0.3.x and emits a one-shot warning the first time it runs.
 func (store *BadgerKV) SearchNodesByName(textName string, limit int) []NodePtr {
+	searchNodesByNameDeprecationOnce.Do(func() {
+		log.Println("SSTorytime: SearchNodesByName is deprecated; use (*Index).SearchByQuery instead")
+	})
 	var results []NodePtr
 	query := strings.ToLower(textName)
 	prefix := []byte("text:")

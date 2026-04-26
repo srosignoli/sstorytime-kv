@@ -1,6 +1,10 @@
 package SSTorytime
 
-import "strings"
+import (
+	"log"
+	"strings"
+	"sync"
+)
 
 // GetDBPageMap delegates page-map retrieval to the storage backend.
 func GetDBPageMap(sst PoSST, chap string, cn []string, page int) []PageMap {
@@ -42,6 +46,8 @@ func GetDBNodePtrMatchingName(sst PoSST, name, chap string) []NodePtr {
 	return GetDBNodePtrMatchingNCCS(sst, name, chap, nil, nil, false, CAUSAL_CONE_MAXLIMIT)
 }
 
+var getDBNodePtrMatchingNCCSDeprecationOnce sync.Once
+
 // GetDBNodePtrMatchingNCCS returns NodePtrs matching the full NCCS criteria
 // (Name, Chapter, Context, Sequence) used by the PostgreSQL implementation.
 //
@@ -57,7 +63,16 @@ func GetDBNodePtrMatchingName(sst PoSST, name, chap string) []NodePtr {
 // The Postgres version issues a single SQL query with ORDER BY L ASC and
 // CARDINALITY(links) DESC.  The KV implementation fetches via the text: index
 // (already sorted by key, closest match first) and then applies filters in Go.
+//
+// Deprecated: prefer (*Index).SearchByQuery for text matching, then apply
+// chapter/context/arrow filters in caller code. SearchByQuery handles
+// stemming, accent folding, CJK bigrams, and the full operator grammar;
+// GetDBNodePtrMatchingNCCS uses raw substring matching that fails on stemmed
+// or accent-folded inputs. Emits a one-shot warning the first time it runs.
 func GetDBNodePtrMatchingNCCS(sst PoSST, nm, chap string, cn []string, arrow []ArrowPtr, seq bool, limit int) []NodePtr {
+	getDBNodePtrMatchingNCCSDeprecationOnce.Do(func() {
+		log.Println("SSTorytime: GetDBNodePtrMatchingNCCS is deprecated; use (*Index).SearchByQuery instead")
+	})
 	// Build arrow set for O(1) membership check.
 	var arrowSet map[ArrowPtr]bool
 	if len(arrow) > 0 {
