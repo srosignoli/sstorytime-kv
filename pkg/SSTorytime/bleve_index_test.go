@@ -187,25 +187,54 @@ func TestSearchByQuery_ProximityAdjacent_US2(t *testing.T) {
 }
 
 // TestSearchByQuery_ProximitySlop_US2 covers acceptance scenario 4:
-// strange<2>woman matches when up to 2 words separate the two terms.
+// strange<2>woman matches docs where `strange` and `woman` are exactly two
+// lexeme positions apart (i.e. one word between them) — PostgreSQL ts_query
+// `<N>` semantics. Docs at other distances must not match.
 func TestSearchByQuery_ProximitySlop_US2(t *testing.T) {
 	idx := indexFixture(t, []struct{ Text, Chapter string }{
-		{"a strange but kind woman", "ch1"},
-		{"unrelated text here", "ch1"},
+		{"strange kind woman", "ch1"},        // distance 2 → MATCH
+		{"strange but kind woman", "ch1"},    // distance 3 → no match
+		{"strange woman", "ch1"},             // distance 1 → no match
+		{"unrelated text here", "ch1"},       // no terms → no match
 	})
 	got, err := idx.SearchByQuery("strange<2>woman", 10)
 	if err != nil {
 		t.Fatalf("SearchByQuery: %v", err)
 	}
-	if len(got) < 1 {
-		t.Fatalf("got %d hits; want at least 1 (slop-2 match). got=%v", len(got), got)
+	hits := nodePtrSet(got)
+	if !hits[(NodePtr{Class: 1, CPtr: 1})] {
+		t.Fatalf("expected distance-2 doc 1 in hits; got %v", got)
+	}
+	if hits[(NodePtr{Class: 1, CPtr: 2})] {
+		t.Errorf("distance-3 doc 2 should not match <2>; got %v", got)
+	}
+	if hits[(NodePtr{Class: 1, CPtr: 3})] {
+		t.Errorf("distance-1 doc 3 should not match <2>; got %v", got)
+	}
+	if hits[(NodePtr{Class: 1, CPtr: 4})] {
+		t.Errorf("unrelated doc 4 should not match; got %v", got)
+	}
+}
+
+// TestSearchByQuery_ProximityChain covers chained <-> across more than two
+// operands — strange<->kind<->of<->woman must match the exact phrase, not
+// just any document containing the words.
+func TestSearchByQuery_ProximityChain(t *testing.T) {
+	idx := indexFixture(t, []struct{ Text, Chapter string }{
+		{"strange kind of woman", "ch1"},     // exact phrase → MATCH
+		{"strange woman of kind heart", "ch1"}, // out of order → no match
+		{"strange and kind woman", "ch1"},    // missing "of" → no match
+	})
+	got, err := idx.SearchByQuery("strange<->kind<->of<->woman", 10)
+	if err != nil {
+		t.Fatalf("SearchByQuery: %v", err)
 	}
 	hits := nodePtrSet(got)
 	if !hits[(NodePtr{Class: 1, CPtr: 1})] {
-		t.Fatalf("expected slop-2 doc 1 in hits; got %v", got)
+		t.Fatalf("expected exact-phrase doc 1 in hits; got %v", got)
 	}
-	if hits[(NodePtr{Class: 1, CPtr: 2})] {
-		t.Errorf("unrelated doc 2 should not match")
+	if hits[(NodePtr{Class: 1, CPtr: 2})] || hits[(NodePtr{Class: 1, CPtr: 3})] {
+		t.Errorf("only the exact-phrase doc should match; got %v", got)
 	}
 }
 

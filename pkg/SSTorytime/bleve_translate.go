@@ -55,11 +55,20 @@ type accentToken struct{ Text string }
 // starting with the stem after lowercasing.
 type prefixToken struct{ Stem string }
 
-// proximity expresses adjacency or slop-bounded ordering between two words.
-// <-> => Slop=0, <N> => Slop=N (must be ≥ 0).
+// proximity expresses an ordered chain of phrase operands with positional
+// gaps between them. For each adjacent pair (Operands[i], Operands[i+1]),
+// Slops[i] is the number of empty placeholder positions between them,
+// matching PostgreSQL ts_query semantics:
+//
+//	a<->b      → Operands=[a,b],     Slops=[0]   (adjacent)
+//	a<2>b      → Operands=[a,b],     Slops=[1]   (b is 2 lexemes after a → 1 word between)
+//	a<->b<->c  → Operands=[a,b,c],   Slops=[0,0]
+//	a<3>b<->c  → Operands=[a,b,c],   Slops=[2,0]
+//
+// len(Slops) is always len(Operands)-1.
 type proximity struct {
-	A, B string
-	Slop int
+	Operands []string
+	Slops    []int
 }
 
 type conjunction struct{ Children []queryNode } // a&b
@@ -328,31 +337,20 @@ func tokenizeChunk(text string, basePos int) ([]chunkTok, error) {
 	return out, nil
 }
 
-// parseWordToken interprets a WORD as proximity (`A<->B` or `A<N>B`),
-// prefix (`stem:*`), or plain bareToken. The `<…>` shape only fires when
-// surrounded by non-empty operands — e.g. `<ions>` standalone stays a
-// bareToken because the left operand is empty.
+// parseWordToken interprets a WORD as proximity chain (`A<->B<->C…` /
+// `A<N>B…`), prefix (`stem:*`), or plain bareToken. The `<…>` shape only
+// fires when surrounded by non-empty operands — e.g. `<ions>` standalone
+// stays a bareToken because the left operand is empty. Proximity is parsed
+// greedily across the entire word so chained operators like
+// `strange<->kind<->of<->woman` produce one proximity node, not a single
+// pair with the rest treated as the second operand.
 func parseWordToken(word string, pos int) (queryNode, error) {
-	if open := strings.IndexByte(word, '<'); open > 0 {
-		if rel := strings.IndexByte(word[open+1:], '>'); rel >= 0 {
-			close := open + 1 + rel
-			if close+1 < len(word) {
-				a := word[:open]
-				slopText := word[open+1 : close]
-				b := word[close+1:]
-				if a != "" && b != "" {
-					if slopText == "-" {
-						return proximity{A: a, B: b, Slop: 0}, nil
-					}
-					if n, convErr := strconv.Atoi(slopText); convErr == nil {
-						if n < 0 {
-							return nil, &ParseError{Pos: pos + open, Message: "proximity slop must be non-negative"}
-						}
-						return proximity{A: a, B: b, Slop: n}, nil
-					}
-				}
-			}
-		}
+	chain, parseErr, ok := parseProximityChain(word, pos)
+	if parseErr != nil {
+		return nil, parseErr
+	}
+	if ok {
+		return chain, nil
 	}
 	if strings.HasSuffix(word, ":*") {
 		stem := word[:len(word)-2]
@@ -361,6 +359,72 @@ func parseWordToken(word string, pos int) (queryNode, error) {
 		}
 	}
 	return bareToken{Text: word}, nil
+}
+
+// parseProximityChain attempts to parse `word` as a chain of `<->` / `<N>`
+// proximity operators. Returns (node, nil, true) on a valid chain, (nil,
+// nil, false) when the shape doesn't match (caller falls back to other
+// productions), or (nil, err, false) on a syntactically valid operator with
+// an out-of-range distance.
+func parseProximityChain(word string, basePos int) (queryNode, error, bool) {
+	var operands []string
+	var slops []int
+	cursor := 0
+	rest := word
+	for {
+		open := strings.IndexByte(rest, '<')
+		if open < 0 {
+			// No more operators — `rest` is the trailing operand.
+			if len(operands) == 0 {
+				return nil, nil, false
+			}
+			if rest == "" {
+				return nil, nil, false
+			}
+			operands = append(operands, rest)
+			break
+		}
+		if open == 0 {
+			// `<…>` at the start of a chunk has no left operand → not proximity.
+			return nil, nil, false
+		}
+		rel := strings.IndexByte(rest[open+1:], '>')
+		if rel < 0 {
+			return nil, nil, false
+		}
+		close := open + 1 + rel
+		left := rest[:open]
+		opText := rest[open+1 : close]
+		// Decode the operator: `-` → distance 1 (adjacent), `<N>` → distance N.
+		var dist int
+		if opText == "-" {
+			dist = 1
+		} else if n, convErr := strconv.Atoi(opText); convErr == nil {
+			if n < 1 {
+				return nil, &ParseError{
+					Pos:     basePos + cursor + open,
+					Message: "proximity distance must be >= 1",
+				}, false
+			}
+			dist = n
+		} else {
+			// Not a recognised operator inside `<…>` — bail; the caller
+			// will fall through to bareToken so e.g. `<weird>` remains text.
+			return nil, nil, false
+		}
+		if close+1 >= len(rest) {
+			// Operator with no right-hand text — not a complete chain.
+			return nil, nil, false
+		}
+		operands = append(operands, left)
+		slops = append(slops, dist-1)
+		cursor += close + 1
+		rest = rest[close+1:]
+	}
+	if len(operands) < 2 {
+		return nil, nil, false
+	}
+	return proximity{Operands: operands, Slops: slops}, nil, true
 }
 
 // tokState is the cursor consumed by the Pratt parser.
@@ -499,13 +563,15 @@ func lower(node queryNode) query.Query {
 	case phraseToken:
 		return phraseTextEnOrCjk(n.Text)
 	case proximity:
-		if n.Slop == 0 {
-			return phraseTextEnOrCjk(n.A + " " + n.B)
-		}
-		// Bleve has no phrase-slop primitive. Approximate `<N>` as a
-		// conjunction requiring both words to appear in the document
-		// (loosest reasonable interpretation; covers US2 scenario 4).
-		return bleve.NewConjunctionQuery(matchTextEnOrCjk(n.A), matchTextEnOrCjk(n.B))
+		// Emit a custom proximityQuery against both analyzed text fields so
+		// the chain matches whether the source is Latin-stemmed or CJK-bigram
+		// indexed. proximityQuery defers operand analysis to search time so
+		// each operand passes through the field's analyzer (stemming,
+		// asciifolding, …) before the multi-phrase is assembled with empty
+		// placeholder slots between operands per Slops[i].
+		en := newProximityQuery(n.Operands, n.Slops, fieldTextEN)
+		cjk := newProximityQuery(n.Operands, n.Slops, fieldTextCJK)
+		return bleve.NewDisjunctionQuery(en, cjk)
 	case exactToken:
 		t := bleve.NewTermQuery(foldRaw(n.Text))
 		t.SetField(fieldTextRaw)

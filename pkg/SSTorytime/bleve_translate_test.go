@@ -58,8 +58,10 @@ func TestParseQuery_AtomTokenizer_US2(t *testing.T) {
 		{"exact bang", `!A!`, exactToken{Text: "A"}},
 		{"exact pipe", `|A|`, exactToken{Text: "A"}},
 		{"prefix", `flo:*`, prefixToken{Stem: "flo"}},
-		{"proximity adjacent", `strange<->kind`, proximity{A: "strange", B: "kind", Slop: 0}},
-		{"proximity slop", `strange<2>woman`, proximity{A: "strange", B: "woman", Slop: 2}},
+		{"proximity adjacent", `strange<->kind`, proximity{Operands: []string{"strange", "kind"}, Slops: []int{0}}},
+		{"proximity slop", `strange<2>woman`, proximity{Operands: []string{"strange", "woman"}, Slops: []int{1}}},
+		{"proximity chain mixed", `strange<->kind<->of<->woman`, proximity{Operands: []string{"strange", "kind", "of", "woman"}, Slops: []int{0, 0, 0}}},
+		{"proximity chain with slop", `strange<3>kind<->woman`, proximity{Operands: []string{"strange", "kind", "woman"}, Slops: []int{2, 0}}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
