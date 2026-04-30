@@ -7106,6 +7106,11 @@ func SimilarString(full, like string) bool {
 
 	// Placeholder
 	// Need to handle pluralisation patterns etc... multi-language
+	//
+	// Comparisons are case-insensitive: DecodeSearchField always lowercases
+	// user input (params.Context, params.Name, etc.) while stored context /
+	// chapter / node strings retain their authored case. A case-sensitive
+	// match here makes \context "Kubernetes Notes" silently fail.
 
 	if full == like {
 		return true
@@ -7115,7 +7120,11 @@ func SimilarString(full, like string) bool {
 		return true
 	}
 
-	if strings.Contains(full, like) {
+	if strings.EqualFold(full, like) {
+		return true
+	}
+
+	if strings.Contains(strings.ToLower(full), strings.ToLower(like)) {
 		return true
 	}
 
