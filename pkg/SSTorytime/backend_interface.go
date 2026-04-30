@@ -1,5 +1,14 @@
 package SSTorytime
 
+// ContextChapterPair is one (combo string, chapter) co-occurrence observed in
+// the PageMap. The combo string is the resolved context name at the row's
+// authoring line, e.g. "restaurant, eating". Used to build inverted "tag →
+// chapters" indexes for context-related listings.
+type ContextChapterPair struct {
+	Combo   string // resolved context name (may be a comma-separated combo)
+	Chapter string
+}
+
 // GraphStore is the storage backend abstraction used by all SSTorytime
 // operations.  BadgerKV is the production implementation; the interface
 // makes it straightforward to swap in a mock or a future backend.
@@ -32,11 +41,13 @@ type GraphStore interface {
 	// Page-map persistence and retrieval
 	SavePageMap(ev PageMap) error
 	GetPageMap(chap string, cn []string, page int) []PageMap
+	ListContextChapterPairs() []ContextChapterPair
 
 	// Context CRUD
 	UploadContext(name string, id ContextPtr) ContextPtr
 	GetContextByName(name string) (string, ContextPtr)
 	GetContextByPtr(id ContextPtr) (string, ContextPtr)
+	ListContexts() []string
 
 	// Last-seen tracking
 	GetLastSawSection() []LastSeen

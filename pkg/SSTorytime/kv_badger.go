@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 	"sync"
 
@@ -725,6 +726,33 @@ func (store *BadgerKV) GetContextByName(name string) (string, ContextPtr) {
 	return name, -1
 }
 
+// ListContexts returns every context name stored under the ctx:name: prefix,
+// sorted alphabetically (case-insensitive). Used by \context any to enumerate
+// the full set of context labels authored across the graph.
+func (store *BadgerKV) ListContexts() []string {
+	prefix := []byte("ctx:name:")
+	var names []string
+	store.db.View(func(txn *badger.Txn) error {
+		opts := badger.DefaultIteratorOptions
+		opts.Prefix = prefix
+		opts.PrefetchValues = false
+		it := txn.NewIterator(opts)
+		defer it.Close()
+		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			key := it.Item().Key()
+			name := string(key[len(prefix):])
+			if name != "" {
+				names = append(names, name)
+			}
+		}
+		return nil
+	})
+	sort.Slice(names, func(i, j int) bool {
+		return strings.ToLower(names[i]) < strings.ToLower(names[j])
+	})
+	return names
+}
+
 // GetContextByPtr looks up a ContextPtr and returns its name.
 // Returns ("any", id) if not found (preserving stub behaviour as fallback).
 func (store *BadgerKV) GetContextByPtr(id ContextPtr) (string, ContextPtr) {
@@ -780,6 +808,51 @@ func pmLinePrefix(chap string, line int) []byte {
 
 func pmKey(chap string, line int, seq uint16) []byte {
 	return []byte(fmt.Sprintf("pm:%s:%010d:%04d", chap, line, seq))
+}
+
+// ListContextChapterPairs scans every PageMap row and returns the distinct
+// (resolved-context, chapter) co-occurrences. Used to build inverted "tag →
+// chapters" indexes for context listings (\context any, \context direct,
+// \context <term>). One pass over the pm: keyspace plus a small cache for
+// ContextPtr → name resolution to keep the lookup count O(unique contexts).
+func (store *BadgerKV) ListContextChapterPairs() []ContextChapterPair {
+	prefix := []byte("pm:")
+	type key struct{ combo, chap string }
+	seen := make(map[key]bool)
+	resolved := make(map[ContextPtr]string)
+
+	store.db.View(func(txn *badger.Txn) error {
+		opts := badger.DefaultIteratorOptions
+		opts.Prefix = prefix
+		it := txn.NewIterator(opts)
+		defer it.Close()
+
+		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			item := it.Item()
+			var ev PageMap
+			if err := item.Value(func(val []byte) error {
+				return json.Unmarshal(val, &ev)
+			}); err != nil {
+				continue
+			}
+			combo, ok := resolved[ev.Context]
+			if !ok {
+				combo, _ = store.GetContextByPtr(ev.Context)
+				resolved[ev.Context] = combo
+			}
+			if combo == "" || ev.Chapter == "" {
+				continue
+			}
+			seen[key{combo, ev.Chapter}] = true
+		}
+		return nil
+	})
+
+	out := make([]ContextChapterPair, 0, len(seen))
+	for k := range seen {
+		out = append(out, ContextChapterPair{Combo: k.combo, Chapter: k.chap})
+	}
+	return out
 }
 
 // SavePageMap writes a PageMap event under pm:<chap>:<line>:<seq>.  The seq

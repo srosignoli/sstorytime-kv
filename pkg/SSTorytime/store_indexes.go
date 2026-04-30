@@ -11,6 +11,21 @@ func GetDBPageMap(sst PoSST, chap string, cn []string, page int) []PageMap {
 	return sst.KV.GetPageMap(chap, cn, page)
 }
 
+// ListContexts returns every context name stored in the graph backend, sorted
+// alphabetically. Used by \context any and the related-context fallback to
+// enumerate the full set of context labels in a collection.
+func ListContexts(sst PoSST) []string {
+	return sst.KV.ListContexts()
+}
+
+// ListContextChapterPairs delegates to the storage backend. Returns the
+// distinct (combo string, chapter) pairs observed in the PageMap; the caller
+// typically splits each combo on "," to derive a tag → chapters inverted
+// index for context listings.
+func ListContextChapterPairs(sst PoSST) []ContextChapterPair {
+	return sst.KV.ListContextChapterPairs()
+}
+
 // GetChaptersByChapContext returns a map of chapter-name → []node-text.
 // If chap is non-empty only that chapter is returned; cn filters by context;
 // limit caps the number of chapters (0 = unlimited).
